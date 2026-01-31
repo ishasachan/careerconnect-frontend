@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Application } from '../../../../shared/models/application.model';
+import { ApplicationService } from '../../../../shared/services/application.service';
+import { AuthService } from '../../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-applications',
@@ -12,23 +14,43 @@ import { Application } from '../../../../shared/models/application.model';
 })
 export class ApplicationsComponent implements OnInit {
   applications: Application[] = [];
+  isLoading = true;
+  errorMessage = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private applicationService: ApplicationService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.loadApplications();
   }
 
   loadApplications() {
-    const saved = localStorage.getItem('applications');
-    if (saved) {
-      this.applications = JSON.parse(saved);
-      // Convert date strings back to Date objects
-      this.applications = this.applications.map(app => ({
-        ...app,
-        appliedDate: new Date(app.appliedDate)
-      }));
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      this.isLoading = false;
+      this.errorMessage = 'Please login to view applications';
+      return;
     }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.applicationService.getUserApplications(currentUser.id).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.success && response.data) {
+          this.applications = response.data;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error loading applications:', error);
+        this.errorMessage = 'Failed to load applications. Please try again.';
+      }
+    });
   }
 
   getStatusClass(status: string): string {
@@ -46,12 +68,12 @@ export class ApplicationsComponent implements OnInit {
     this.router.navigate(['/dashboard/seeker/find-jobs', jobId]);
   }
 
-  formatDate(date: Date): string {
+  formatDate(date: string): string {
     return new Intl.DateTimeFormat('en-US', { 
       month: 'short', 
       day: 'numeric', 
       year: 'numeric' 
-    }).format(date);
+    }).format(new Date(date));
   }
 
   getStatusCount(status: string): number {

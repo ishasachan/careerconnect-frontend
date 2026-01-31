@@ -6,6 +6,7 @@ import { JobService } from '../../../../shared/services/job.service';
 import { Job } from '../../../../shared/models/job.model';
 import { ProfileService } from '../../../../shared/services/profile.service';
 import { AuthService } from '../../../../shared/services/auth.service';
+import { ApplicationService } from '../../../../shared/services/application.service';
 
 @Component({
   selector: 'app-job-details',
@@ -38,7 +39,8 @@ export class JobDetailsComponent implements OnInit {
     private router: Router,
     private jobService: JobService,
     private profileService: ProfileService,
-    private authService: AuthService
+    private authService: AuthService,
+    private applicationService: ApplicationService
   ) {}
 
   ngOnInit() {
@@ -153,39 +155,41 @@ export class JobDetailsComponent implements OnInit {
       return;
     }
 
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      alert('Please login to apply');
+      return;
+    }
+
     this.isSubmittingApplication = true;
 
-    // Create application object
-    const application = {
-      id: Date.now().toString(),
+    // Create application request
+    const applicationRequest = {
+      userId: currentUser.id,
       jobId: this.job.id,
-      jobTitle: this.job.title,
-      company: this.job.company,
-      location: this.job.location,
-      salary: this.job.salary,
-      appliedDate: new Date(),
-      status: 'APPLIED' as const,
       fullName: this.applicationForm.fullName,
       email: this.applicationForm.email,
       phone: this.applicationForm.phone,
-      coverLetter: this.applicationForm.coverLetter,
-      yearsOfExperience: this.applicationForm.yearsOfExperience,
-      currentCompany: this.applicationForm.currentCompany,
-      resumeUrl: this.applicationForm.resumeUrl
+      yearsOfExperience: this.applicationForm.yearsOfExperience ? parseInt(this.applicationForm.yearsOfExperience) : 0,
+      currentCompany: this.applicationForm.currentCompany || '',
+      resumeUrl: this.applicationForm.resumeUrl || '',
+      coverLetter: this.applicationForm.coverLetter || ''
     };
 
-    // Save to localStorage
-    const existingApplications = localStorage.getItem('applications');
-    let applications = existingApplications ? JSON.parse(existingApplications) : [];
-    applications.push(application);
-    localStorage.setItem('applications', JSON.stringify(applications));
-
-    // Simulate API call
-    setTimeout(() => {
-      this.isSubmittingApplication = false;
-      alert('Application submitted successfully!');
-      this.closeApplicationForm();
-    }, 1500);
+    this.applicationService.submitApplication(applicationRequest).subscribe({
+      next: (response) => {
+        this.isSubmittingApplication = false;
+        if (response.success) {
+          alert('Application submitted successfully!');
+          this.closeApplicationForm();
+        }
+      },
+      error: (error) => {
+        this.isSubmittingApplication = false;
+        console.error('Error submitting application:', error);
+        alert('Failed to submit application. Please try again.');
+      }
+    });
   }
 
   checkCompatibility() {
