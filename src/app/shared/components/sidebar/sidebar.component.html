@@ -1,0 +1,32 @@
+<aside class="w-64 h-screen bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
+  <!-- Logo Section -->
+  <div class="px-6 py-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <i class="fas fa-briefcase text-white text-lg"></i>
+      </div>
+      <h1 class="text-xl font-bold text-slate-900">CareerConnect</h1>
+    </div>
+  </div>
+  
+  <!-- Navigation -->
+  <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+    <a 
+      *ngFor="let item of navItems" 
+      [routerLink]="item.route" 
+      routerLinkActive="bg-indigo-50 text-indigo-600" 
+      [routerLinkActiveOptions]="{exact: item.exact || false}" 
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 font-medium cursor-pointer">
+      <i [class]="item.icon"></i>
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <!-- Logout at Bottom -->
+  <div class="p-4 border-t border-slate-200 flex-shrink-0">
+    <a (click)="onLogout()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 font-medium cursor-pointer">
+      <i class="fas fa-sign-out-alt"></i>
+      <span>Logout</span>
+    </a>
+  </div>
+</aside>

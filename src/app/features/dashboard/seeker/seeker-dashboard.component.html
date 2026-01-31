@@ -1,0 +1,106 @@
+<!-- Stats Cards -->
+<div class="p-8">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-4 mb-2">
+        <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
+          <i class="fas fa-briefcase text-xl"></i>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Applied Jobs</p>
+      </div>
+      <p class="text-3xl font-bold text-slate-900">1</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-4 mb-2">
+        <div class="p-3 bg-green-50 rounded-xl text-green-600">
+          <i class="fas fa-check-circle text-xl"></i>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Interviews</p>
+      </div>
+      <p class="text-3xl font-bold text-slate-900">2</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-4 mb-2">
+        <div class="p-3 bg-purple-50 rounded-xl text-purple-600">
+          <i class="fas fa-bullseye text-xl"></i>
+        </div>
+        <p class="text-slate-500 text-sm font-medium">Profile Views</p>
+      </div>
+      <p class="text-3xl font-bold text-slate-900">45</p>
+    </div>
+  </div>
+
+  <!-- Recent Applications & AI Recommendations -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Recent Applications -->
+    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="font-bold text-slate-900">Recent Applications</h3>
+        <button class="text-indigo-600 text-sm font-semibold hover:text-indigo-700">View All</button>
+      </div>
+      <div class="divide-y divide-slate-50">
+        <div class="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
+          <div>
+            <p class="font-bold text-slate-900">Senior Frontend Engineer</p>
+            <p class="text-slate-500 text-sm">TechCorp</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-bold uppercase bg-green-50 text-green-700">SHORTLISTED</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Recommendations -->
+    <div class="bg-linear-to-br from-slate-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+      <div class="relative z-10">
+        <!-- Header -->
+        <div class="flex items-center gap-2 mb-6">
+          <i class="fas fa-bolt text-orange-500 text-xl"></i>
+          <h3 class="text-xl font-bold">AI Recommendations</h3>
+        </div>
+
+        <!-- Job Cards -->
+        <div class="space-y-3 mb-6">
+          <!-- Job 1 -->
+          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="font-bold text-white mb-1">Senior Frontend Engineer</p>
+                <p class="text-slate-400 text-xs uppercase tracking-wider">TECHFLOW</p>
+              </div>
+              <span class="text-blue-400 text-xs font-semibold">Match High</span>
+            </div>
+          </div>
+
+          <!-- Job 2 -->
+          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="font-bold text-white mb-1">Product Designer</p>
+                <p class="text-slate-400 text-xs uppercase tracking-wider">CREATIVEEDGE</p>
+              </div>
+              <span class="text-blue-400 text-xs font-semibold">Match High</span>
+            </div>
+          </div>
+
+          <!-- Job 3 -->
+          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="font-bold text-white mb-1">Backend Developer (Spring Boot)</p>
+                <p class="text-slate-400 text-xs uppercase tracking-wider">CLOUDNATIVE</p>
+              </div>
+              <span class="text-blue-400 text-xs font-semibold">Match High</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors">
+          Explore All Opportunities
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+/* Signup/Login Component Styles */
+
+:host {
+  display: block;
+}
+
+/* Card animation */
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.bg-white {
+  animation: cardEntrance 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button disabled state */
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.primary-btn:disabled:hover {
+  background: #4F46E5 !important;
+  transform: none !important;
+}
+
+/* Enhanced input focus */
+.auth-input:focus {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Smooth transitions */
+button,
+input {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button hover effect */
+button:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Validation Tooltip with Arrow */
+.validation-tooltip {
+  white-space: nowrap;
+}
+
+.validation-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 12px;
+  border: 6px solid transparent;
+  border-bottom-color: #ffffff;
+}
+
+.validation-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 11px;
+  border: 7px solid transparent;
+  border-bottom-color: oklch(0.79 0.06 255.2);
+}

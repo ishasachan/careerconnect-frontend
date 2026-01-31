@@ -1,0 +1,89 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import "tailwindcss";
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #F8FAFC;
+  color: #1E293B;
+}
+
+/* Auth Input */
+.auth-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-top: 0.25rem;
+  border-radius: 0.75rem;
+  border: 2px solid #CBD5E1;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.auth-input:focus {
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.auth-input.border-red-500 {
+  border-color: #EF4444;
+}
+
+/* Primary Button */
+.primary-btn {
+  width: 100%;
+  background-color: #4F46E5;
+  color: white;
+  font-weight: 700;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.25);
+  transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+.primary-btn:hover:not(:disabled) {
+  background-color: #4338CA;
+  transform: translateY(-2px);
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Role Buttons */
+.role-active {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background-color: #4F46E5;
+  color: white;
+  border: 1px solid #4F46E5;
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.25);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.role-inactive {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background-color: white;
+  color: #475569;
+  border: 1px solid #E2E8F0;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.role-inactive:hover {
+  border-color: #4F46E5;
+}
+
