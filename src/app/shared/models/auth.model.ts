@@ -11,19 +11,14 @@ export interface SignupRequest {
 }
 
 export interface AuthResponse {
-  token?: string;
-  user?: {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-  };
-  message?: string;
+  userId: number;
+  token: string;
+  role: string;
+  email: string;
 }
 
 export interface User {
-  id: string;
-  name: string;
+  id: number;
   email: string;
   role: string;
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { LoginRequest, SignupRequest, AuthResponse } from '../models/auth.model';
+import { LoginRequest, SignupRequest, AuthResponse, User } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +15,7 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        if (response.token) {
-          localStorage.setItem('token', response.token);
-        }
-        if (response.user) {
-          localStorage.setItem('user', JSON.stringify(response.user));
-        }
+        this.storeAuthData(response);
       })
     );
   }
@@ -28,14 +23,22 @@ export class AuthService {
   signup(userData: SignupRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, userData).pipe(
       tap(response => {
-        if (response.token) {
-          localStorage.setItem('token', response.token);
-        }
-        if (response.user) {
-          localStorage.setItem('user', JSON.stringify(response.user));
-        }
+        this.storeAuthData(response);
       })
     );
+  }
+
+  private storeAuthData(response: AuthResponse): void {
+    if (response.token) {
+      localStorage.setItem('token', response.token);
+    }
+    
+    const user: User = {
+      id: response.userId,
+      email: response.email,
+      role: response.role
+    };
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   logout(): void {
@@ -47,7 +50,7 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
-  getCurrentUser(): any {
+  getCurrentUser(): User | null {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
