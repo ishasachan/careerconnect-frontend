@@ -253,4 +253,18 @@ export class SeekerProfileComponent implements OnInit {
     const fileInput = document.getElementById('avatarFileInput') as HTMLInputElement;
     fileInput?.click();
   }
+
+  getResumeFileName(): string {
+    if (!this.resumeUrl) return '';
+    
+    try {
+      // Extract filename from URL
+      const url = new URL(this.resumeUrl);
+      const pathname = url.pathname;
+      const filename = pathname.substring(pathname.lastIndexOf('/') + 1);
+      return decodeURIComponent(filename);
+    } catch (e) {
+      return 'Resume.pdf';
+    }
+  }
 }

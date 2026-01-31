@@ -187,6 +187,31 @@
           </div>
         </div>
 
+        <!-- Resume Preview Section -->
+        <div *ngIf="resumeUrl" class="pt-4">
+          <div class="bg-slate-50 rounded-3xl p-6 border-2 border-slate-100">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-red-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <i class="fas fa-file-pdf text-2xl text-white"></i>
+                </div>
+                <div class="flex-1">
+                  <h4 class="text-sm font-bold text-slate-900 mb-1">Resume Document</h4>
+                  <p class="text-xs text-slate-500 font-medium">{{ getResumeFileName() }}</p>
+                </div>
+              </div>
+              <a 
+                [href]="resumeUrl" 
+                target="_blank"
+                class="flex items-center gap-2 px-5 py-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-600 transition-all font-bold text-sm"
+              >
+                <i class="fas fa-external-link-alt"></i>
+                <span>Open PDF</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
         <div class="pt-6">
           <button 
             type="submit"
@@ -200,7 +225,7 @@
               </svg>
               Synchronizing...
             </span>
-            <span *ngIf="!isSaving">Commit Changes to Profile</span>
+            <span *ngIf="!isSaving">Save Changes to Profile</span>
           </button>
         </div>
       </form>
