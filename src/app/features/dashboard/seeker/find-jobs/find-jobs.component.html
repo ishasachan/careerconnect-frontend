@@ -4,6 +4,16 @@
     <p class="text-slate-500 mt-2">Discover your next career move</p>
   </div>
 
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="mb-6">
+    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+      <p class="text-sm text-red-600 flex items-center gap-2">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </p>
+    </div>
+  </div>
+
   <!-- Search and Filters -->
   <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-6">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -14,6 +24,7 @@
             type="text" 
             placeholder="Search by job title, company, or keywords..."
             [(ngModel)]="searchKeyword"
+            (keyup.enter)="searchJobs()"
             class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors"
           />
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -24,6 +35,7 @@
       <div>
         <select 
           [(ngModel)]="selectedJobType"
+          (change)="searchJobs()"
           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors appearance-none cursor-pointer"
         >
           <option value="">All Types</option>
@@ -35,12 +47,26 @@
       <div>
         <select 
           [(ngModel)]="selectedLocation"
+          (change)="searchJobs()"
           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors appearance-none cursor-pointer"
         >
           <option value="">All Locations</option>
           <option *ngFor="let location of locations.slice(1)" [value]="location">{{ location }}</option>
         </select>
       </div>
+    </div>
+
+    <!-- Search Button -->
+    <div class="mt-4">
+      <button
+        (click)="searchJobs()"
+        [disabled]="isLoading"
+        class="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
+      >
+        <i *ngIf="!isLoading" class="fas fa-search"></i>
+        <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
+        <span>{{ isLoading ? 'Searching...' : 'Search Jobs' }}</span>
+      </button>
     </div>
 
     <!-- Active Filters & Clear -->
@@ -70,14 +96,22 @@
   </div>
 
   <!-- Results Count -->
-  <div class="mb-4">
+  <div class="mb-4" *ngIf="!isLoading">
     <p class="text-slate-600 text-sm">
       Found <span class="font-bold text-slate-900">{{ jobs.length }}</span> job{{ jobs.length !== 1 ? 's' : '' }}
     </p>
   </div>
 
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+    <div class="text-center">
+      <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+      <p class="text-slate-600">Loading jobs...</p>
+    </div>
+  </div>
+
   <!-- Jobs Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="jobs.length > 0">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="jobs.length > 0 && !isLoading">
     <div 
       *ngFor="let job of jobs"
       class="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer group"

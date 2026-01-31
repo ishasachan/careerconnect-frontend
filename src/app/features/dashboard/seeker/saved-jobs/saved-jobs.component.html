@@ -1,0 +1,95 @@
+<div class="p-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900 flex items-center gap-3">
+      <i class="fas fa-bookmark text-indigo-600"></i>
+      Saved Jobs
+    </h1>
+    <p class="text-slate-500 mt-2">Your bookmarked opportunities</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+    <div class="text-center">
+      <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+      <p class="text-slate-600">Loading saved jobs...</p>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && savedJobs.length === 0" class="text-center py-20">
+    <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+      <i class="fas fa-bookmark text-4xl text-slate-400"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-slate-900 mb-2">No Saved Jobs Yet</h2>
+    <p class="text-slate-500 mb-6">Start saving jobs you're interested in to view them here</p>
+    <button 
+      (click)="navigateToJobs()"
+      class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors"
+    >
+      <i class="fas fa-search mr-2"></i>
+      Browse Jobs
+    </button>
+  </div>
+
+  <!-- Saved Jobs Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="!isLoading && savedJobs.length > 0">
+    <div 
+      *ngFor="let job of savedJobs"
+      class="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group relative"
+    >
+      <!-- Remove Button -->
+      <button
+        (click)="removeSavedJob(job.id)"
+        class="absolute top-4 right-4 w-8 h-8 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center"
+        title="Remove from saved"
+      >
+        <i class="fas fa-trash-alt text-sm"></i>
+      </button>
+
+      <div class="cursor-pointer" (click)="viewJobDetails(job)">
+        <div class="flex justify-between items-start mb-4 pr-10">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+              {{ job.title }}
+            </h3>
+            <p class="text-indigo-600 font-medium text-sm">{{ job.company }}</p>
+          </div>
+        </div>
+
+        <div class="space-y-2 mb-4">
+          <div class="flex items-center gap-2 text-slate-500 text-sm">
+            <i class="fas fa-map-marker-alt w-4"></i>
+            <span>{{ job.location }}</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-500 text-sm">
+            <i class="fas fa-dollar-sign w-4"></i>
+            <span>{{ job.salary }}</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-500 text-sm">
+            <i class="fas fa-clock w-4"></i>
+            <span>Posted {{ formatDate(job.postedDate) }}</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span 
+            *ngFor="let skill of getRequirementsArray(job.requirements)" 
+            class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-xs font-medium"
+          >
+            {{ skill }}
+          </span>
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+          <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full uppercase tracking-wider">
+            {{ job.type }}
+          </span>
+          <span class="text-xs text-slate-400 flex items-center gap-1">
+            <i class="fas fa-users"></i>
+            {{ job.applicantsCount }} applicants
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

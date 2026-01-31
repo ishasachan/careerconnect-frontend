@@ -1,9 +1,33 @@
-<div class="p-8" *ngIf="job">
-  <!-- Back Button -->
-  <button (click)="goBack()" class="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-6 font-medium">
-    <i class="fas fa-arrow-left"></i>
-    <span>Back to Search</span>
-  </button>
+<div class="p-8">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+      <p class="text-slate-600">Loading job details...</p>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="mb-6">
+    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+      <p class="text-sm text-red-600 flex items-center gap-2">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ errorMessage }}
+      </p>
+    </div>
+    <button (click)="goBack()" class="flex items-center gap-2 text-slate-600 hover:text-slate-900 mt-4 font-medium">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back to Search</span>
+    </button>
+  </div>
+
+  <!-- Job Details -->
+  <div *ngIf="job && !isLoading">
+    <!-- Back Button -->
+    <button (click)="goBack()" class="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-6 font-medium">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back to Search</span>
+    </button>
 
   <!-- Job Header -->
   <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-6">
@@ -65,7 +89,7 @@
         </h2>
         <div class="grid grid-cols-2 gap-4">
           <div 
-            *ngFor="let skill of job.requirements"
+            *ngFor="let skill of getRequirementsArray()"
             class="px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl font-medium flex items-center gap-2"
           >
             <i class="fas fa-check-circle"></i>
@@ -90,8 +114,8 @@
           (click)="checkCompatibility()"
           class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
         >
+          <i class="fas fa-chart-line"></i>
           Check My Compatibility
-          <i class="fas fa-arrow-right"></i>
         </button>
       </div>
 
@@ -138,11 +162,9 @@
       </div>
     </div>
   </div>
-</div>
 
-<!-- No job found -->
-<div *ngIf="!job" class="p-8">
-  <div class="text-center py-12">
+  <!-- Empty State (No Job Found) -->
+  <div *ngIf="!job && !isLoading && !errorMessage" class="text-center py-12">
     <i class="fas fa-exclamation-circle text-6xl text-slate-300 mb-4"></i>
     <h2 class="text-2xl font-bold text-slate-900 mb-2">Job Not Found</h2>
     <p class="text-slate-500 mb-6">The job you're looking for doesn't exist.</p>

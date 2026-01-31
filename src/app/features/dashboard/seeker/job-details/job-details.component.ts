@@ -1,21 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-
-interface Job {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  salary: string;
-  type: string;
-  postedDate: string;
-  applicantsCount: number;
-  description: string;
-  requirements: string[];
-  department: string;
-  logo?: string;
-}
+import { JobService } from '../../../../shared/services/job.service';
+import { Job } from '../../../../shared/models/job.model';
 
 @Component({
   selector: 'app-job-details',
@@ -27,59 +14,51 @@ interface Job {
 export class JobDetailsComponent implements OnInit {
   job: Job | null = null;
   isBookmarked = false;
-
-  // Sample job data - in real app, this would come from a service
-  jobs: { [key: string]: Job } = {
-    '1': {
-      id: '1',
-      title: 'Senior Frontend Engineer',
-      company: 'TechFlow',
-      location: 'San Francisco, CA',
-      salary: '$150k - $200k',
-      type: 'FULL-TIME',
-      postedDate: '2023-10-25',
-      applicantsCount: 12,
-      description: 'We are looking for a React expert to lead our dashboard redesign and help build the next generation of our platform. You will work with a talented team of designers and engineers.',
-      requirements: ['React', 'TypeScript', 'Tailwind CSS', 'Next.js'],
-      department: 'Engineering'
-    },
-    '2': {
-      id: '2',
-      title: 'Product Designer',
-      company: 'DesignFlow',
-      location: 'New York, NY',
-      salary: '$100k - $130k',
-      type: 'FULL-TIME',
-      postedDate: '2023-11-05',
-      applicantsCount: 8,
-      description: 'Join our design team to create beautiful and intuitive user experiences. Work on exciting projects across web and mobile platforms.',
-      requirements: ['Figma', 'UI/UX Design', 'Prototyping', 'User Research'],
-      department: 'Design'
-    },
-    '3': {
-      id: '3',
-      title: 'Backend Developer (Node.js)',
-      company: 'ServerSide',
-      location: 'Berlin, DE',
-      salary: '€80 - €100 / hr',
-      type: 'CONTRACT',
-      postedDate: '2023-11-10',
-      applicantsCount: 4,
-      description: 'We need an experienced backend developer to help scale our API infrastructure and improve system reliability.',
-      requirements: ['Node.js', 'PostgreSQL', 'Docker', 'AWS'],
-      department: 'Engineering'
-    }
-  };
+  isLoading = true;
+  errorMessage = '';
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private jobService: JobService
   ) {}
 
   ngOnInit() {
     const jobId = this.route.snapshot.paramMap.get('id');
-    if (jobId && this.jobs[jobId]) {
-      this.job = this.jobs[jobId];
+    if (jobId) {
+      this.loadJobDetails(+jobId);
+    } else {
+      this.isLoading = false;
+      this.errorMessage = 'Invalid job ID';
+    }
+  }
+
+  loadJobDetails(jobId: number) {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.jobService.getJobById(jobId).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.success && response.data) {
+          this.job = response.data;
+          this.checkIfBookmarked();
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching job details:', error);
+        this.errorMessage = 'Failed to load job details. Please try again.';
+      }
+    });
+  }
+
+  checkIfBookmarked() {
+    if (!this.job) return;
+    const saved = localStorage.getItem('savedJobs');
+    if (saved) {
+      const savedJobs: Job[] = JSON.parse(saved);
+      this.isBookmarked = savedJobs.some(j => j.id === this.job!.id);
     }
   }
 
@@ -88,7 +67,22 @@ export class JobDetailsComponent implements OnInit {
   }
 
   toggleBookmark() {
-    this.isBookmarked = !this.isBookmarked;
+    if (!this.job) return;
+
+    const saved = localStorage.getItem('savedJobs');
+    let savedJobs: Job[] = saved ? JSON.parse(saved) : [];
+
+    if (this.isBookmarked) {
+      // Remove from saved jobs
+      savedJobs = savedJobs.filter(j => j.id !== this.job!.id);
+      this.isBookmarked = false;
+    } else {
+      // Add to saved jobs
+      savedJobs.push(this.job);
+      this.isBookmarked = true;
+    }
+
+    localStorage.setItem('savedJobs', JSON.stringify(savedJobs));
   }
 
   applyNow() {
@@ -99,6 +93,11 @@ export class JobDetailsComponent implements OnInit {
   checkCompatibility() {
     console.log('Checking compatibility for job:', this.job?.title);
     alert('Compatibility check initiated!');
+  }
+
+  getRequirementsArray(): string[] {
+    if (!this.job?.requirements) return [];
+    return this.job.requirements.split(',').filter(r => r.trim()).map(r => r.trim());
   }
 
   formatDate(dateString: string): string {

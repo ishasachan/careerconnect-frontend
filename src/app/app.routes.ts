@@ -8,6 +8,7 @@ import { SeekerLayoutComponent } from './features/dashboard/seeker/layout/seeker
 import { FindJobsComponent } from './features/dashboard/seeker/find-jobs/find-jobs.component';
 import { JobDetailsComponent } from './features/dashboard/seeker/job-details/job-details.component';
 import { ApplicationsComponent } from './features/dashboard/seeker/applications/applications.component';
+import { SavedJobsComponent } from './features/dashboard/seeker/saved-jobs/saved-jobs.component';
 import { RecruiterLayoutComponent } from './features/dashboard/recruiter/layout/recruiter-layout.component';
 import { RecruiterProfileComponent } from './features/dashboard/recruiter/profile/recruiter-profile.component';
 import { RecruiterListingsComponent } from './features/dashboard/recruiter/listings/recruiter-listings.component';
@@ -51,6 +52,10 @@ export const routes: Routes = [
       {
         path: 'applications',
         component: ApplicationsComponent
+      },
+      {
+        path: 'saved-jobs',
+        component: SavedJobsComponent
       }
     ]
   },
