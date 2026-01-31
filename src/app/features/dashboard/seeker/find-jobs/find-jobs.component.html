@@ -189,49 +189,32 @@
 
         <!-- Recommended Jobs -->
         <div class="space-y-3 mb-6">
-          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors cursor-pointer">
+          <div 
+            *ngFor="let rec of recommendations" 
+            (click)="viewRecommendedJob(rec.jobId)"
+            class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors cursor-pointer">
             <div class="flex items-start justify-between mb-2">
               <div>
-                <p class="font-bold text-sm text-white mb-1">Senior Full Stack Developer</p>
-                <p class="text-xs text-slate-400 uppercase tracking-wide">TechCorp Inc.</p>
+                <p class="font-bold text-sm text-white mb-1">{{ rec.title }}</p>
+                <p class="text-xs text-slate-400 uppercase tracking-wide">{{ rec.company }}</p>
               </div>
-              <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded">95%</span>
+              <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded">{{ rec.match }}%</span>
             </div>
-            <p class="text-xs text-slate-400 mb-2">Remote • $120k-150k</p>
-            <div class="flex gap-1">
-              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">React</span>
-              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">Node.js</span>
+            <p class="text-xs text-slate-400 mb-2">{{ rec.location }} • {{ rec.salary }}</p>
+            <div class="flex gap-1 flex-wrap">
+              <span *ngFor="let skill of rec.skills" class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">{{ skill }}</span>
             </div>
           </div>
 
-          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors cursor-pointer">
-            <div class="flex items-start justify-between mb-2">
-              <div>
-                <p class="font-bold text-sm text-white mb-1">Frontend Engineer</p>
-                <p class="text-xs text-slate-400 uppercase tracking-wide">StartupXYZ</p>
-              </div>
-              <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded">88%</span>
-            </div>
-            <p class="text-xs text-slate-400 mb-2">San Francisco • $100k-130k</p>
-            <div class="flex gap-1">
-              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">Angular</span>
-              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">TypeScript</span>
-            </div>
-          </div>
-
-          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors cursor-pointer">
-            <div class="flex items-start justify-between mb-2">
-              <div>
-                <p class="font-bold text-sm text-white mb-1">Backend Developer</p>
-                <p class="text-xs text-slate-400 uppercase tracking-wide">CloudTech</p>
-              </div>
-              <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded">82%</span>
-            </div>
-            <p class="text-xs text-slate-400 mb-2">Remote • $110k-140k</p>
-            <div class="flex gap-1">
-              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">Java</span>
-              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">Spring</span>
-            </div>
+          <!-- Empty State -->
+          <div *ngIf="recommendations.length === 0" class="text-center py-6">
+            <i class="fas fa-user-circle text-slate-600 text-3xl mb-3"></i>
+            <p class="text-xs text-slate-400 mb-2">Complete your profile to get personalized recommendations!</p>
+            <button 
+              (click)="navigateToProfile()" 
+              class="mt-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors">
+              Complete Profile
+            </button>
           </div>
         </div>
 

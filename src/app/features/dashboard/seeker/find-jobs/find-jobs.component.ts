@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { JobService } from '../../../../shared/services/job.service';
 import { Job } from '../../../../shared/models/job.model';
+import { RecommendationService } from '../../../../shared/services/recommendation.service';
+import { Recommendation } from '../../../../shared/models/recommendation.model';
+import { AuthService } from '../../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-find-jobs',
@@ -20,6 +23,7 @@ export class FindJobsComponent implements OnInit {
   errorMessage = '';
   
   jobs: Job[] = [];
+  recommendations: Recommendation[] = [];
 
   jobTypes = ['All Types', 'FULL-TIME', 'PART-TIME', 'CONTRACT', 'INTERNSHIP'];
   locations = ['All Locations', 'Remote', 'New York, NY', 'San Francisco, CA', 'Austin, TX', 'Berlin, DE'];
@@ -28,11 +32,35 @@ export class FindJobsComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private jobService: JobService
+    private jobService: JobService,
+    private recommendationService: RecommendationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     this.searchJobs();
+    this.loadRecommendations();
+  }
+
+  loadRecommendations() {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.recommendationService.getUserRecommendations(currentUser.id).subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.recommendations = response.data.slice(0, 3); // Get top 3
+          } else {
+            // Profile not found or no recommendations
+            console.log('No recommendations available:', response.message);
+            this.recommendations = [];
+          }
+        },
+        error: (error) => {
+          console.error('Error loading recommendations:', error);
+          this.recommendations = [];
+        }
+      });
+    }
   }
 
   searchJobs() {
@@ -62,6 +90,13 @@ export class FindJobsComponent implements OnInit {
 
   viewJobDetails(job: Job) {
     this.router.navigate(['/dashboard/seeker/find-jobs', job.id]);
+  }
+  viewRecommendedJob(jobId: number) {
+    this.router.navigate(['/dashboard/seeker/job-details', jobId]);
+  }
+
+  navigateToProfile() {
+    this.router.navigate(['/dashboard/seeker/profile']);
   }
 
   clearFilters() {
