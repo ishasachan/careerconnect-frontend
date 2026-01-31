@@ -173,3 +173,162 @@
     </button>
   </div>
 </div>
+
+<!-- Application Form Modal -->
+<div 
+  *ngIf="showApplicationForm" 
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+  (click)="closeApplicationForm()"
+>
+  <div 
+    class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Modal Header -->
+    <div class="sticky top-0 bg-white border-b border-slate-200 p-6 rounded-t-3xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">Apply for Position</h2>
+          <p class="text-sm text-slate-500 mt-1">{{ job?.title }} at {{ job?.company }}</p>
+        </div>
+        <button 
+          (click)="closeApplicationForm()"
+          class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+        >
+          <i class="fas fa-times text-slate-600"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Body -->
+    <form (ngSubmit)="submitApplication()" class="p-6 space-y-6">
+      <!-- Full Name -->
+      <div>
+        <label class="block text-sm font-bold text-slate-900 mb-2">
+          Full Name <span class="text-red-500">*</span>
+        </label>
+        <input 
+          type="text" 
+          [(ngModel)]="applicationForm.fullName"
+          name="fullName"
+          required
+          class="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white focus:outline-none transition-all"
+          placeholder="Enter your full name"
+        />
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block text-sm font-bold text-slate-900 mb-2">
+          Email Address <span class="text-red-500">*</span>
+        </label>
+        <input 
+          type="email" 
+          [(ngModel)]="applicationForm.email"
+          name="email"
+          required
+          class="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white focus:outline-none transition-all"
+          placeholder="your.email@example.com"
+        />
+      </div>
+
+      <!-- Phone -->
+      <div>
+        <label class="block text-sm font-bold text-slate-900 mb-2">
+          Phone Number <span class="text-red-500">*</span>
+        </label>
+        <input 
+          type="tel" 
+          [(ngModel)]="applicationForm.phone"
+          name="phone"
+          required
+          class="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white focus:outline-none transition-all"
+          placeholder="+1 (555) 000-0000"
+        />
+      </div>
+
+      <!-- Years of Experience -->
+      <div>
+        <label class="block text-sm font-bold text-slate-900 mb-2">
+          Years of Experience
+        </label>
+        <input 
+          type="number" 
+          [(ngModel)]="applicationForm.yearsOfExperience"
+          name="yearsOfExperience"
+          min="0"
+          class="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white focus:outline-none transition-all"
+          placeholder="e.g., 5"
+        />
+      </div>
+
+      <!-- Current Company -->
+      <div>
+        <label class="block text-sm font-bold text-slate-900 mb-2">
+          Current Company
+        </label>
+        <input 
+          type="text" 
+          [(ngModel)]="applicationForm.currentCompany"
+          name="currentCompany"
+          class="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white focus:outline-none transition-all"
+          placeholder="Your current employer"
+        />
+      </div>
+
+      <!-- Resume URL (Read-only) -->
+      <div *ngIf="applicationForm.resumeUrl">
+        <label class="block text-sm font-bold text-slate-900 mb-2">
+          Resume
+        </label>
+        <div class="flex items-center gap-3 p-4 bg-green-50 border-2 border-green-100 rounded-xl">
+          <i class="fas fa-file-pdf text-2xl text-red-500"></i>
+          <div class="flex-1">
+            <p class="text-sm font-medium text-slate-900">Resume attached from profile</p>
+            <a 
+              [href]="applicationForm.resumeUrl" 
+              target="_blank"
+              class="text-xs text-indigo-600 hover:underline"
+            >
+              View Resume
+            </a>
+          </div>
+          <i class="fas fa-check-circle text-green-600"></i>
+        </div>
+      </div>
+
+      <!-- Cover Letter -->
+      <div>
+        <label class="block text-sm font-bold text-slate-900 mb-2">
+          Cover Letter
+        </label>
+        <textarea 
+          [(ngModel)]="applicationForm.coverLetter"
+          name="coverLetter"
+          rows="5"
+          class="w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white focus:outline-none transition-all resize-none"
+          placeholder="Tell us why you're a great fit for this role..."
+        ></textarea>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex gap-3 pt-4">
+        <button
+          type="button"
+          (click)="closeApplicationForm()"
+          class="flex-1 px-6 py-3 border-2 border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="isSubmittingApplication"
+          class="flex-1 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          <i *ngIf="isSubmittingApplication" class="fas fa-spinner fa-spin"></i>
+          <span>{{ isSubmittingApplication ? 'Submitting...' : 'Submit Application' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

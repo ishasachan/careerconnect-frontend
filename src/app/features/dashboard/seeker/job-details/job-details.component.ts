@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JobService } from '../../../../shared/services/job.service';
 import { Job } from '../../../../shared/models/job.model';
+import { ProfileService } from '../../../../shared/services/profile.service';
+import { AuthService } from '../../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-job-details',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.css'
 })
@@ -16,11 +19,26 @@ export class JobDetailsComponent implements OnInit {
   isBookmarked = false;
   isLoading = true;
   errorMessage = '';
+  showApplicationForm = false;
+  isSubmittingApplication = false;
+
+  // Application form data
+  applicationForm = {
+    fullName: '',
+    email: '',
+    phone: '',
+    coverLetter: '',
+    yearsOfExperience: '',
+    currentCompany: '',
+    resumeUrl: ''
+  };
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private jobService: JobService
+    private jobService: JobService,
+    private profileService: ProfileService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -86,8 +104,88 @@ export class JobDetailsComponent implements OnInit {
   }
 
   applyNow() {
-    console.log('Applying to job:', this.job?.title);
-    alert('Application submitted successfully!');
+    this.showApplicationForm = true;
+    this.loadUserProfile();
+  }
+
+  loadUserProfile() {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.profileService.getProfile(currentUser.id).subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            // Auto-fill form from profile
+            this.applicationForm.fullName = response.data.user.name || '';
+            this.applicationForm.email = response.data.user.email || '';
+            this.applicationForm.resumeUrl = response.data.resumeUrl || '';
+          }
+        },
+        error: (error) => {
+          console.error('Error loading profile:', error);
+        }
+      });
+    }
+  }
+
+  closeApplicationForm() {
+    this.showApplicationForm = false;
+    this.resetApplicationForm();
+  }
+
+  resetApplicationForm() {
+    this.applicationForm = {
+      fullName: '',
+      email: '',
+      phone: '',
+      coverLetter: '',
+      yearsOfExperience: '',
+      currentCompany: '',
+      resumeUrl: ''
+    };
+  }
+
+  submitApplication() {
+    if (!this.job) return;
+
+    // Validate required fields
+    if (!this.applicationForm.fullName || !this.applicationForm.email || !this.applicationForm.phone) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    this.isSubmittingApplication = true;
+
+    // Create application object
+    const application = {
+      id: Date.now().toString(),
+      jobId: this.job.id,
+      jobTitle: this.job.title,
+      company: this.job.company,
+      location: this.job.location,
+      salary: this.job.salary,
+      appliedDate: new Date(),
+      status: 'APPLIED' as const,
+      fullName: this.applicationForm.fullName,
+      email: this.applicationForm.email,
+      phone: this.applicationForm.phone,
+      coverLetter: this.applicationForm.coverLetter,
+      yearsOfExperience: this.applicationForm.yearsOfExperience,
+      currentCompany: this.applicationForm.currentCompany,
+      resumeUrl: this.applicationForm.resumeUrl
+    };
+
+    // Save to localStorage
+    const existingApplications = localStorage.getItem('applications');
+    let applications = existingApplications ? JSON.parse(existingApplications) : [];
+    applications.push(application);
+    localStorage.setItem('applications', JSON.stringify(applications));
+
+    // Simulate API call
+    setTimeout(() => {
+      this.isSubmittingApplication = false;
+      alert('Application submitted successfully!');
+      this.closeApplicationForm();
+    }, 1500);
   }
 
   checkCompatibility() {

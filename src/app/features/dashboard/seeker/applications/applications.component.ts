@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Application } from '../../../../shared/models/application.model';
 
 @Component({
   selector: 'app-applications',
@@ -9,47 +10,26 @@ import { Router } from '@angular/router';
   templateUrl: './applications.component.html',
   styleUrl: './applications.component.css'
 })
-export class ApplicationsComponent {
-  applications = [
-    {
-      id: 1,
-      jobTitle: 'Senior Frontend Engineer',
-      company: 'TechCorp',
-      appliedDate: new Date('2026-01-15'),
-      status: 'SHORTLISTED',
-      location: 'Remote',
-      salary: '$120k - $160k'
-    },
-    {
-      id: 2,
-      jobTitle: 'Full Stack Developer',
-      company: 'InnovateTech',
-      appliedDate: new Date('2026-01-20'),
-      status: 'UNDER REVIEW',
-      location: 'San Francisco, CA',
-      salary: '$110k - $150k'
-    },
-    {
-      id: 3,
-      jobTitle: 'React Developer',
-      company: 'StartupXYZ',
-      appliedDate: new Date('2026-01-10'),
-      status: 'REJECTED',
-      location: 'New York, NY',
-      salary: '$100k - $130k'
-    },
-    {
-      id: 4,
-      jobTitle: 'UI/UX Engineer',
-      company: 'DesignHub',
-      appliedDate: new Date('2026-01-25'),
-      status: 'APPLIED',
-      location: 'Remote',
-      salary: '$90k - $120k'
-    }
-  ];
+export class ApplicationsComponent implements OnInit {
+  applications: Application[] = [];
 
   constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.loadApplications();
+  }
+
+  loadApplications() {
+    const saved = localStorage.getItem('applications');
+    if (saved) {
+      this.applications = JSON.parse(saved);
+      // Convert date strings back to Date objects
+      this.applications = this.applications.map(app => ({
+        ...app,
+        appliedDate: new Date(app.appliedDate)
+      }));
+    }
+  }
 
   getStatusClass(status: string): string {
     const statusClasses: { [key: string]: string } = {
