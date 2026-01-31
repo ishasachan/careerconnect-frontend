@@ -1,106 +1,155 @@
 <!-- Stats Cards -->
 <div class="p-8">
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-      <div class="flex items-center gap-4 mb-2">
-        <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
-          <i class="fas fa-briefcase text-xl"></i>
-        </div>
-        <p class="text-slate-500 text-sm font-medium">Applied Jobs</p>
-      </div>
-      <p class="text-3xl font-bold text-slate-900">1</p>
-    </div>
+  <!-- Welcome Section -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900">Dashboard</h1>
+    <p class="text-slate-500 mt-2">Track your job search progress</p>
+  </div>
 
-    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-      <div class="flex items-center gap-4 mb-2">
-        <div class="p-3 bg-green-50 rounded-xl text-green-600">
-          <i class="fas fa-check-circle text-xl"></i>
-        </div>
-        <p class="text-slate-500 text-sm font-medium">Interviews</p>
-      </div>
-      <p class="text-3xl font-bold text-slate-900">2</p>
-    </div>
-
-    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-      <div class="flex items-center gap-4 mb-2">
-        <div class="p-3 bg-purple-50 rounded-xl text-purple-600">
-          <i class="fas fa-bullseye text-xl"></i>
-        </div>
-        <p class="text-slate-500 text-sm font-medium">Profile Views</p>
-      </div>
-      <p class="text-3xl font-bold text-slate-900">45</p>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+    <div class="text-center">
+      <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+      <p class="text-slate-600">Loading dashboard...</p>
     </div>
   </div>
 
-  <!-- Recent Applications & AI Recommendations -->
+  <div *ngIf="!isLoading">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <!-- Total Applications -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer" (click)="navigateTo('/dashboard/seeker/applications')">
+        <div class="flex items-center justify-between mb-2">
+          <div class="p-3 bg-blue-50 rounded-xl">
+            <i class="fas fa-paper-plane text-blue-600 text-xl"></i>
+          </div>
+          <i class="fas fa-arrow-right text-slate-400"></i>
+        </div>
+        <p class="text-slate-500 text-sm font-medium mb-1">Total Applications</p>
+        <p class="text-3xl font-bold text-slate-900">{{ stats.totalApplications }}</p>
+      </div>
+
+      <!-- Shortlisted -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer" (click)="navigateTo('/dashboard/seeker/applications')">
+        <div class="flex items-center justify-between mb-2">
+          <div class="p-3 bg-green-50 rounded-xl">
+            <i class="fas fa-star text-green-600 text-xl"></i>
+          </div>
+          <i class="fas fa-arrow-right text-slate-400"></i>
+        </div>
+        <p class="text-slate-500 text-sm font-medium mb-1">Shortlisted</p>
+        <p class="text-3xl font-bold text-slate-900">{{ stats.shortlisted }}</p>
+      </div>
+
+      <!-- Saved Jobs -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer" (click)="navigateTo('/dashboard/seeker/saved-jobs')">
+        <div class="flex items-center justify-between mb-2">
+          <div class="p-3 bg-purple-50 rounded-xl">
+            <i class="fas fa-bookmark text-purple-600 text-xl"></i>
+          </div>
+          <i class="fas fa-arrow-right text-slate-400"></i>
+        </div>
+        <p class="text-slate-500 text-sm font-medium mb-1">Saved Jobs</p>
+        <p class="text-3xl font-bold text-slate-900">{{ stats.savedJobs }}</p>
+      </div>
+
+      <!-- Profile Completion -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer" (click)="navigateTo('/dashboard/seeker/profile')">
+        <div class="flex items-center justify-between mb-2">
+          <div class="p-3 bg-orange-50 rounded-xl">
+            <i class="fas fa-user-circle text-orange-600 text-xl"></i>
+          </div>
+          <i class="fas fa-arrow-right text-slate-400"></i>
+        </div>
+        <p class="text-slate-500 text-sm font-medium mb-1">Profile Completion</p>
+        <p class="text-3xl font-bold text-slate-900">{{ stats.profileCompletion }}%</p>
+      </div>
+    </div>
+
+  <!-- Recent Applications & Latest Jobs -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Recent Applications -->
     <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-        <h3 class="font-bold text-slate-900">Recent Applications</h3>
-        <button class="text-indigo-600 text-sm font-semibold hover:text-indigo-700">View All</button>
+        <h3 class="font-bold text-slate-900 text-lg">Recent Applications</h3>
+        <button (click)="navigateTo('/dashboard/seeker/applications')" class="text-indigo-600 text-sm font-semibold hover:text-indigo-700">View All</button>
       </div>
-      <div class="divide-y divide-slate-50">
-        <div class="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
-          <div>
-            <p class="font-bold text-slate-900">Senior Frontend Engineer</p>
-            <p class="text-slate-500 text-sm">TechCorp</p>
+      
+      <!-- Applications List -->
+      <div *ngIf="getRecentApplications().length > 0" class="divide-y divide-slate-50">
+        <div *ngFor="let application of getRecentApplications()" class="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer" (click)="viewJob(application.job.id)">
+          <div class="flex-1">
+            <p class="font-bold text-slate-900 mb-1">{{ application.job.title }}</p>
+            <p class="text-slate-500 text-sm">{{ application.job.company }}</p>
+            <div class="flex items-center gap-2 mt-2 text-xs text-slate-400">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ application.job.location }}</span>
+              <span class="mx-2">•</span>
+              <i class="fas fa-calendar"></i>
+              <span>{{ application.appliedDate | date:'shortDate' }}</span>
+            </div>
           </div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold uppercase bg-green-50 text-green-700">SHORTLISTED</span>
+          <span [class]="getStatusClass(application.status)" class="px-3 py-1 rounded-full text-xs font-bold uppercase whitespace-nowrap ml-4">
+            {{ application.status.replace('_', ' ') }}
+          </span>
         </div>
       </div>
-    </div>
 
-    <!-- AI Recommendations -->
-    <div class="bg-linear-to-br from-slate-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-      <div class="relative z-10">
-        <!-- Header -->
-        <div class="flex items-center gap-2 mb-6">
-          <i class="fas fa-bolt text-orange-500 text-xl"></i>
-          <h3 class="text-xl font-bold">AI Recommendations</h3>
+      <!-- Empty State -->
+      <div *ngIf="getRecentApplications().length === 0" class="p-12 text-center">
+        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-paper-plane text-2xl text-slate-400"></i>
         </div>
-
-        <!-- Job Cards -->
-        <div class="space-y-3 mb-6">
-          <!-- Job 1 -->
-          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors">
-            <div class="flex items-start justify-between">
-              <div>
-                <p class="font-bold text-white mb-1">Senior Frontend Engineer</p>
-                <p class="text-slate-400 text-xs uppercase tracking-wider">TECHFLOW</p>
-              </div>
-              <span class="text-blue-400 text-xs font-semibold">Match High</span>
-            </div>
-          </div>
-
-          <!-- Job 2 -->
-          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors">
-            <div class="flex items-start justify-between">
-              <div>
-                <p class="font-bold text-white mb-1">Product Designer</p>
-                <p class="text-slate-400 text-xs uppercase tracking-wider">CREATIVEEDGE</p>
-              </div>
-              <span class="text-blue-400 text-xs font-semibold">Match High</span>
-            </div>
-          </div>
-
-          <!-- Job 3 -->
-          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors">
-            <div class="flex items-start justify-between">
-              <div>
-                <p class="font-bold text-white mb-1">Backend Developer (Spring Boot)</p>
-                <p class="text-slate-400 text-xs uppercase tracking-wider">CLOUDNATIVE</p>
-              </div>
-              <span class="text-blue-400 text-xs font-semibold">Match High</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- CTA Button -->
-        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors">
-          Explore All Opportunities
+        <p class="text-slate-600 font-medium mb-2">No applications yet</p>
+        <p class="text-sm text-slate-400 mb-4">Start applying to jobs to see them here</p>
+        <button (click)="navigateTo('/dashboard/seeker/find-jobs')" class="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium">
+          Browse Jobs
         </button>
       </div>
     </div>
+
+    <!-- Latest Jobs -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="font-bold text-slate-900 text-lg">Latest Jobs</h3>
+        <button (click)="navigateTo('/dashboard/seeker/find-jobs')" class="text-indigo-600 text-sm font-semibold hover:text-indigo-700">View All</button>
+      </div>
+
+      <!-- Job Cards -->
+      <div class="p-4 space-y-3 max-h-[500px] overflow-y-auto">
+        <div *ngFor="let job of recentJobs" 
+             (click)="viewJob(job.id)"
+             class="p-4 border border-slate-200 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all cursor-pointer">
+          <div class="flex items-start justify-between mb-2">
+            <div class="flex-1">
+              <p class="font-bold text-slate-900 text-sm mb-1">{{ job.title }}</p>
+              <p class="text-slate-500 text-xs">{{ job.company }}</p>
+            </div>
+            <span class="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full uppercase">
+              {{ job.type }}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-slate-400 mt-2">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ job.location }}</span>
+          </div>
+          <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+            <span class="text-xs font-medium text-emerald-600">{{ job.salary }}</span>
+            <span class="text-xs text-slate-400">
+              <i class="fas fa-users mr-1"></i>{{ job.applicantsCount }} applicants
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="recentJobs.length === 0" class="p-12 text-center">
+        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-briefcase text-2xl text-slate-400"></i>
+        </div>
+        <p class="text-slate-600 font-medium">No jobs available</p>
+      </div>
+    </div>
+  </div>
   </div>
 </div>

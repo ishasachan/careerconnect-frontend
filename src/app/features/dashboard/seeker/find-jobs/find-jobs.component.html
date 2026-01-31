@@ -102,69 +102,150 @@
     </p>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="flex items-center justify-center py-20">
-    <div class="text-center">
-      <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
-      <p class="text-slate-600">Loading jobs...</p>
-    </div>
-  </div>
-
-  <!-- Jobs Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="jobs.length > 0 && !isLoading">
-    <div 
-      *ngFor="let job of jobs"
-      class="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer group"
-      (click)="viewJobDetails(job)"
-    >
-      <div class="flex justify-between items-start mb-4">
-        <div>
-          <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
-            {{ job.title }}
-          </h3>
-          <p class="text-indigo-600 font-medium text-sm">{{ job.company }}</p>
-        </div>
-        <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full uppercase tracking-wider">
-          {{ job.type }}
-        </span>
-      </div>
-
-      <div class="space-y-2 mb-4">
-        <div class="flex items-center gap-2 text-slate-500 text-sm">
-          <i class="fas fa-map-marker-alt w-4"></i>
-          {{ job.location }}
-        </div>
-        <div class="flex items-center gap-2 text-slate-500 text-sm">
-          <i class="fas fa-dollar-sign w-4"></i>
-          {{ job.salary }}
-        </div>
-        <div class="flex items-center gap-2 text-slate-400 text-xs">
-          <i class="fas fa-clock w-4"></i>
-          Posted on {{ formatDate(job.postedDate) }}
+  <!-- Main Content with AI Companion -->
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Jobs Grid (Left Side) -->
+    <div class="lg:col-span-3">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+        <div class="text-center">
+          <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+          <p class="text-slate-600">Loading jobs...</p>
         </div>
       </div>
 
-      <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-        <span class="text-xs text-slate-400">
-          {{ job.applicantsCount }} applicants
-        </span>
-        <button class="flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-700">
-          View Details <i class="fas fa-external-link-alt text-xs"></i>
+      <!-- Jobs Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" *ngIf="jobs.length > 0 && !isLoading">
+        <div 
+          *ngFor="let job of jobs"
+          class="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer group"
+          (click)="viewJobDetails(job)"
+        >
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                {{ job.title }}
+              </h3>
+              <p class="text-indigo-600 font-medium text-sm">{{ job.company }}</p>
+            </div>
+            <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full uppercase tracking-wider">
+              {{ job.type }}
+            </span>
+          </div>
+
+          <div class="space-y-2 mb-4">
+            <div class="flex items-center gap-2 text-slate-500 text-sm">
+              <i class="fas fa-map-marker-alt w-4"></i>
+              {{ job.location }}
+            </div>
+            <div class="flex items-center gap-2 text-slate-500 text-sm">
+              <i class="fas fa-dollar-sign w-4"></i>
+              {{ job.salary }}
+            </div>
+            <div class="flex items-center gap-2 text-slate-400 text-xs">
+              <i class="fas fa-clock w-4"></i>
+              Posted on {{ formatDate(job.postedDate) }}
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <span class="text-xs text-slate-400">
+              {{ job.applicantsCount }} applicants
+            </span>
+            <button class="flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-700">
+              View Details <i class="fas fa-external-link-alt text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="jobs.length === 0 && !isLoading" class="text-center py-12">
+        <i class="fas fa-search text-6xl text-slate-300 mb-4"></i>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">No jobs found</h3>
+        <p class="text-slate-500 mb-6">Try adjusting your filters or search keywords</p>
+        <button 
+          (click)="clearFilters()"
+          class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors"
+        >
+          Clear Filters
         </button>
       </div>
     </div>
-  </div>
 
-  <!-- No Results -->
-  <div *ngIf="jobs.length === 0" class="text-center py-12">
-    <i class="fas fa-search text-6xl text-slate-300 mb-4"></i>
-    <h3 class="text-xl font-bold text-slate-900 mb-2">No jobs found</h3>
-    <p class="text-slate-500 mb-6">Try adjusting your filters or search keywords</p>
-    <button 
-      (click)="clearFilters()"
-      class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors"
-    >
-      Clear Filters
-    </button>
+    <!-- AI Companion Card (Right Side) -->
+    <div class="lg:col-span-1" *ngIf="!isLoading">
+      <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white sticky top-6 shadow-xl">
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <i class="fas fa-magic text-white"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg">AI Recommendations</h3>
+            <p class="text-xs text-slate-400">Powered by AI</p>
+          </div>
+        </div>
+
+        <!-- Recommended Jobs -->
+        <div class="space-y-3 mb-6">
+          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors cursor-pointer">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <p class="font-bold text-sm text-white mb-1">Senior Full Stack Developer</p>
+                <p class="text-xs text-slate-400 uppercase tracking-wide">TechCorp Inc.</p>
+              </div>
+              <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded">95%</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-2">Remote • $120k-150k</p>
+            <div class="flex gap-1">
+              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">React</span>
+              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">Node.js</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors cursor-pointer">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <p class="font-bold text-sm text-white mb-1">Frontend Engineer</p>
+                <p class="text-xs text-slate-400 uppercase tracking-wide">StartupXYZ</p>
+              </div>
+              <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded">88%</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-2">San Francisco • $100k-130k</p>
+            <div class="flex gap-1">
+              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">Angular</span>
+              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">TypeScript</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors cursor-pointer">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <p class="font-bold text-sm text-white mb-1">Backend Developer</p>
+                <p class="text-xs text-slate-400 uppercase tracking-wide">CloudTech</p>
+              </div>
+              <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded">82%</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-2">Remote • $110k-140k</p>
+            <div class="flex gap-1">
+              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">Java</span>
+              <span class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">Spring</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="border-t border-slate-700 pt-4">
+          <p class="text-xs text-slate-400 mb-3">
+            <i class="fas fa-lightbulb text-yellow-400 mr-2"></i>
+            <span class="font-semibold text-slate-300">Pro Tip:</span> Complete your profile to get better matches!
+          </p>
+          <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors text-sm">
+            <i class="fas fa-sparkles mr-2"></i>Get More Recommendations
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
