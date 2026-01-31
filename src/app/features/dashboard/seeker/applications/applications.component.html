@@ -46,15 +46,15 @@
            class="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-slate-50 transition-colors">
         <!-- Job Info -->
         <div class="col-span-5">
-          <h3 class="font-semibold text-slate-800 mb-1">{{ application.jobTitle }}</h3>
-          <p class="text-sm text-slate-500">{{ application.company }}</p>
-          <p class="text-xs text-slate-400 mt-1">{{ application.salary }}</p>
+          <h3 class="font-semibold text-slate-800 mb-1">{{ application.job.title }}</h3>
+          <p class="text-sm text-slate-500">{{ application.job.company }}</p>
+          <p class="text-xs text-slate-400 mt-1">{{ application.job.salary }}</p>
         </div>
 
         <!-- Location -->
         <div class="col-span-2 flex items-center">
           <i class="fa-solid fa-location-dot text-slate-400 mr-2"></i>
-          <span class="text-sm text-slate-600">{{ application.location }}</span>
+          <span class="text-sm text-slate-600">{{ application.job.location }}</span>
         </div>
 
         <!-- Applied Date -->
@@ -73,7 +73,7 @@
 
         <!-- Action -->
         <div class="col-span-1 flex items-center justify-end">
-          <button (click)="viewJobDetails(application.jobId)"
+          <button (click)="viewJobDetails(application.job.id)"
                   class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
             View
           </button>

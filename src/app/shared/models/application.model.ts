@@ -1,7 +1,9 @@
+import { Job } from './job.model';
+
 export interface Application {
   id: number;
   userId: number;
-  jobId: number;
+  job: Job;
   fullName: string;
   email: string;
   phone: string;
@@ -11,12 +13,6 @@ export interface Application {
   coverLetter: string;
   status: 'APPLIED' | 'UNDER_REVIEW' | 'SHORTLISTED' | 'INTERVIEW' | 'REJECTED';
   appliedDate: string;
-  
-  // Additional fields for display (will be populated from job data)
-  jobTitle?: string;
-  company?: string;
-  location?: string;
-  salary?: string;
 }
 
 export interface ApplicationRequest {
