@@ -5,6 +5,7 @@ import { StatCardComponent } from '../../../../shared/components/stat-card/stat-
 import { JobService } from '../../../../shared/services/job.service';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { Job } from '../../../../shared/models/job.model';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-recruiter-listings',
@@ -22,7 +23,8 @@ export class RecruiterListingsComponent implements OnInit {
   constructor(
     private router: Router,
     private jobService: JobService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -99,15 +101,16 @@ export class RecruiterListingsComponent implements OnInit {
         next: (response) => {
           if (response.success) {
             console.log('Job paused successfully:', response);
+            this.toastService.success('Job paused successfully');
             // Reload jobs to get updated status
             this.loadJobs();
           } else {
-            alert('Failed to pause job: ' + response.message);
+            this.toastService.error('Failed to pause job: ' + response.message);
           }
         },
         error: (error) => {
           console.error('Error pausing job:', error);
-          alert('Failed to pause job. Please try again.');
+          this.toastService.error('Failed to pause job. Please try again.');
         }
       });
     }
@@ -120,15 +123,16 @@ export class RecruiterListingsComponent implements OnInit {
         next: (response) => {
           if (response.success) {
             console.log('Job resumed successfully:', response);
+            this.toastService.success('Job resumed successfully');
             // Reload jobs to get updated status
             this.loadJobs();
           } else {
-            alert('Failed to resume job: ' + response.message);
+            this.toastService.error('Failed to resume job: ' + response.message);
           }
         },
         error: (error) => {
           console.error('Error resuming job:', error);
-          alert('Failed to resume job. Please try again.');
+          this.toastService.error('Failed to resume job. Please try again.');
         }
       });
     }
@@ -187,15 +191,16 @@ export class RecruiterListingsComponent implements OnInit {
         next: (response) => {
           if (response.success) {
             console.log('Job closed successfully:', response);
+            this.toastService.success('Job closed successfully');
             // Reload jobs to get updated status
             this.loadJobs();
           } else {
-            alert('Failed to close job: ' + response.message);
+            this.toastService.error('Failed to close job: ' + response.message);
           }
         },
         error: (error) => {
           console.error('Error closing job:', error);
-          alert('Failed to close job. Please try again.');
+          this.toastService.error('Failed to close job. Please try again.');
         }
       });
     }
@@ -208,15 +213,16 @@ export class RecruiterListingsComponent implements OnInit {
         next: (response) => {
           if (response.success) {
             console.log('Job reopened successfully:', response);
+            this.toastService.success('Job reopened successfully');
             // Reload jobs to get updated status
             this.loadJobs();
           } else {
-            alert('Failed to reopen job: ' + response.message);
+            this.toastService.error('Failed to reopen job: ' + response.message);
           }
         },
         error: (error) => {
           console.error('Error reopening job:', error);
-          alert('Failed to reopen job. Please try again.');
+          this.toastService.error('Failed to reopen job. Please try again.');
         }
       });
     }
@@ -229,15 +235,16 @@ export class RecruiterListingsComponent implements OnInit {
         next: (response) => {
           if (response.success) {
             console.log('Job deleted successfully:', response);
+            this.toastService.success('Job deleted successfully');
             // Remove from local list
             this.listings = this.listings.filter(l => l.id !== jobId);
           } else {
-            alert('Failed to delete job: ' + response.message);
+            this.toastService.error('Failed to delete job: ' + response.message);
           }
         },
         error: (error) => {
           console.error('Error deleting job:', error);
-          alert('Failed to delete job. Please try again.');
+          this.toastService.error('Failed to delete job. Please try again.');
         }
       });
     }

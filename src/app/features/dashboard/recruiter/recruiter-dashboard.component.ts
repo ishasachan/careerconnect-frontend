@@ -13,7 +13,7 @@ import { Application } from '../../../shared/models/application.model';
 @Component({
   selector: 'app-recruiter-dashboard',
   standalone: true,
-  imports: [CommonModule, NgxChartsModule, StatCardComponent],
+  imports: [CommonModule, NgxChartsModule],
   templateUrl: './recruiter-dashboard.component.html',
   styleUrl: './recruiter-dashboard.component.css'
 })

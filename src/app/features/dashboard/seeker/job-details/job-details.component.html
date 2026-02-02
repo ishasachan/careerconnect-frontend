@@ -93,22 +93,98 @@
 
     <!-- Right Column -->
     <div class="space-y-6">
-      <!-- Smart Candidate Match -->
-      <div class="bg-linear-to-br from-slate-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg">
-        <h3 class="text-xl font-bold mb-3 flex items-center gap-2">
-          <i class="fas fa-sparkles text-orange-500"></i>
-          Smart Candidate Match
-        </h3>
-        <p class="text-slate-300 text-sm mb-6 leading-relaxed">
-          Compare your profile skills, experience, and bio against this job's requirements using our Gemini-powered engine.
-        </p>
-        <button 
-          (click)="checkCompatibility()"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
-        >
-          <i class="fas fa-chart-line"></i>
-          Check My Compatibility
-        </button>
+      <!-- AI Career Review -->
+      <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-lg">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-bold flex items-center gap-2">
+            <span class="text-2xl">✨</span>
+            <span>AI Career Review</span>
+          </h3>
+          <button 
+            *ngIf="showMatchResult"
+            (click)="closeMatchResult()"
+            class="text-slate-400 hover:text-white transition-colors"
+            title="Reset"
+          >
+            <i class="fas fa-redo text-sm"></i>
+          </button>
+        </div>
+
+        <!-- Initial State -->
+        <div *ngIf="!showMatchResult">
+          <p class="text-slate-400 text-sm mb-4 leading-relaxed">
+            Get instant AI analysis of how well your profile matches this job requirements.
+          </p>
+          <button 
+            (click)="checkCompatibility()"
+            [disabled]="isCheckingMatch"
+            class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-3 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed uppercase text-sm tracking-wider"
+          >
+            <i class="fas" [class.fa-spinner]="isCheckingMatch" [class.fa-spin]="isCheckingMatch" [class.fa-chart-line]="!isCheckingMatch"></i>
+            <span *ngIf="!isCheckingMatch">Check My Compatibility</span>
+            <span *ngIf="isCheckingMatch">Analyzing...</span>
+          </button>
+        </div>
+
+        <!-- Results State -->
+        <div *ngIf="showMatchResult && matchResult">
+          <!-- Overall Match Score -->
+          <div class="mb-6 pb-6 border-b border-slate-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Overall Match</p>
+                <div class="flex items-baseline gap-3">
+                  <span class="text-5xl font-black">{{ matchResult.matchScore }}%</span>
+                  <span class="text-sm font-semibold px-3 py-1.5 rounded-md"
+                        [ngClass]="{
+                          'bg-emerald-500/20 text-emerald-400': matchResult.matchScore >= 75,
+                          'bg-yellow-500/20 text-yellow-400': matchResult.matchScore >= 50 && matchResult.matchScore < 75,
+                          'bg-orange-500/20 text-orange-400': matchResult.matchScore >= 25 && matchResult.matchScore < 50,
+                          'bg-red-500/20 text-red-400': matchResult.matchScore < 25
+                        }">
+                    {{ getMatchLabel(matchResult.matchScore) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Core Strengths -->
+          <div class="mb-6">
+            <h4 class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-3">Core Strengths</h4>
+            <div class="space-y-2.5">
+              <div class="flex items-start gap-3">
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+                <p class="text-slate-200 text-sm">Skills match: {{ matchResult.skillScore }}% compatibility</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+                <p class="text-slate-200 text-sm">Experience level: {{ matchResult.experienceScore }}% aligned</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+                <p class="text-slate-200 text-sm">Profile strength: {{ matchResult.profileScore }}% match</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Recommendation -->
+          <div class="mb-6 pb-6 border-b border-slate-700">
+            <h4 class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-3">AI Recommendation</h4>
+            <p class="text-blue-400 italic text-sm leading-relaxed">"{{ matchResult.feedback }}"</p>
+          </div>
+
+          <!-- Run New Analysis Button -->
+          <button 
+            (click)="checkCompatibility()"
+            [disabled]="isCheckingMatch"
+            class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-300 font-medium py-3 rounded-lg transition-all flex items-center justify-center gap-2 uppercase text-xs tracking-widest disabled:opacity-50"
+          >
+            <i class="fas fa-sync-alt" [class.fa-spin]="isCheckingMatch"></i>
+            <span>{{ isCheckingMatch ? 'Analyzing...' : 'Run New Analysis' }}</span>
+          </button>
+        </div>
       </div>
 
       <!-- Position Details -->

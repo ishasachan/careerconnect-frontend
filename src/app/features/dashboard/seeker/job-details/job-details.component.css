@@ -1,5 +1,19 @@
 /* Job Details specific styles */
 
+/* Shimmer animation for Smart Candidate Match */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 3s infinite;
+}
+
 /* Rich text content styling */
 ::ng-deep .prose {
   color: #475569;

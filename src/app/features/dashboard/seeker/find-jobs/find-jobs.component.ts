@@ -180,8 +180,9 @@ export class FindJobsComponent implements OnInit {
   viewJobDetails(job: Job) {
     this.router.navigate(['/dashboard/seeker/find-jobs', job.id]);
   }
+  
   viewRecommendedJob(jobId: number) {
-    this.router.navigate(['/dashboard/seeker/job-details', jobId]);
+    this.router.navigate(['/dashboard/seeker/find-jobs', jobId]);
   }
 
   navigateToProfile() {

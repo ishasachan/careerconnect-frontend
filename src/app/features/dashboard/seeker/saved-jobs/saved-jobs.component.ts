@@ -42,10 +42,6 @@ export class SavedJobsComponent implements OnInit {
     this.router.navigate(['/dashboard/seeker/find-jobs']);
   }
 
-  getRequirementsArray(requirements: string): string[] {
-    return requirements.split(',').filter(r => r.trim()).map(r => r.trim()).slice(0, 3);
-  }
-
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',

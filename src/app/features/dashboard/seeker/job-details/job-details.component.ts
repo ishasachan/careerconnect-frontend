@@ -7,6 +7,8 @@ import { Job } from '../../../../shared/models/job.model';
 import { ProfileService } from '../../../../shared/services/profile.service';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { ApplicationService } from '../../../../shared/services/application.service';
+import { MatchService } from '../../../../shared/services/match.service';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-job-details',
@@ -22,6 +24,9 @@ export class JobDetailsComponent implements OnInit {
   errorMessage = '';
   showApplicationForm = false;
   isSubmittingApplication = false;
+  isCheckingMatch = false;
+  matchResult: any = null;
+  showMatchResult = false;
 
   // Application form data
   applicationForm = {
@@ -40,7 +45,9 @@ export class JobDetailsComponent implements OnInit {
     private jobService: JobService,
     private profileService: ProfileService,
     private authService: AuthService,
-    private applicationService: ApplicationService
+    private applicationService: ApplicationService,
+    private matchService: MatchService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -157,13 +164,13 @@ export class JobDetailsComponent implements OnInit {
 
     // Validate required fields
     if (!this.applicationForm.fullName || !this.applicationForm.email || !this.applicationForm.phone) {
-      alert('Please fill in all required fields');
+      this.toastService.error('Please fill in all required fields');
       return;
     }
 
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
-      alert('Please login to apply');
+      this.toastService.warning('Please login to apply');
       return;
     }
 
@@ -186,11 +193,11 @@ export class JobDetailsComponent implements OnInit {
       next: (response) => {
         this.isSubmittingApplication = false;
         if (response.success) {
-          alert('Application submitted successfully!');
+          this.toastService.success('Application submitted successfully!');
           this.closeApplicationForm();
         } else {
           // Handle error case (e.g., already applied)
-          alert(response.message || 'Failed to submit application');
+          this.toastService.error(response.message || 'Failed to submit application');
           this.closeApplicationForm();
         }
       },
@@ -198,15 +205,58 @@ export class JobDetailsComponent implements OnInit {
         this.isSubmittingApplication = false;
         console.error('Error submitting application:', error);
         const errorMsg = error.error?.message || 'Failed to submit application. Please try again.';
-        alert(errorMsg);
+        this.toastService.error(errorMsg);
         this.closeApplicationForm();
       }
     });
   }
 
   checkCompatibility() {
-    console.log('Checking compatibility for job:', this.job?.title);
-    alert('Compatibility check initiated!');
+    if (!this.job) return;
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      this.toastService.warning('Please login to check compatibility');
+      return;
+    }
+
+    this.isCheckingMatch = true;
+    this.showMatchResult = false;
+
+    this.matchService.checkCompatibility(currentUser.id, this.job.id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.matchResult = response.data;
+          this.showMatchResult = true;
+        } else {
+          this.toastService.error(response.message || 'Failed to check compatibility');
+        }
+        this.isCheckingMatch = false;
+      },
+      error: (error) => {
+        console.error('Error checking compatibility:', error);
+        this.toastService.error('Failed to check compatibility. Please try again.');
+        this.isCheckingMatch = false;
+      }
+    });
+  }
+
+  getMatchColor(score: number): string {
+    if (score >= 75) return 'green';
+    if (score >= 50) return 'yellow';
+    if (score >= 25) return 'orange';
+    return 'red';
+  }
+
+  getMatchLabel(score: number): string {
+    if (score >= 75) return 'Excellent Match';
+    if (score >= 50) return 'Good Match';
+    if (score >= 25) return 'Fair Match';
+    return 'Low Match';
+  }
+
+  closeMatchResult() {
+    this.showMatchResult = false;
   }
 
   getRequirementsArray(): string[] {

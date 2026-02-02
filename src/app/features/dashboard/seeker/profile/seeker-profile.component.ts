@@ -6,6 +6,7 @@ import { ProfileService } from '../../../../shared/services/profile.service';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { UploadService } from '../../../../shared/services/upload.service';
 import { AiFeedback, Profile } from '../../../../shared/models/profile.model';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-seeker-profile',
@@ -43,7 +44,8 @@ export class SeekerProfileComponent implements OnInit {
     private router: Router,
     private profileService: ProfileService,
     private authService: AuthService,
-    private uploadService: UploadService
+    private uploadService: UploadService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -99,10 +101,13 @@ export class SeekerProfileComponent implements OnInit {
     this.isSaving = true;
     this.errorMessage = '';
     
+    // Remove duplicate skills before saving
+    const uniqueSkills = this.getSkillsArray().join(', ');
+    
     const profileData = {
       userId: this.user.id,
       bio: this.bio,
-      skills: this.skills,
+      skills: uniqueSkills,
       resumeUrl: this.resumeUrl,
       avatarUrl: this.avatarUrl,
       aiFeedback: this.aiFeedback ? JSON.stringify(this.aiFeedback) : ''
@@ -112,7 +117,9 @@ export class SeekerProfileComponent implements OnInit {
       next: (response) => {
         this.isSaving = false;
         if (response.success) {
-          alert('Profile updated successfully!');
+          // Update local skills with deduplicated version
+          this.skills = uniqueSkills;
+          this.toastService.success('Profile updated successfully!');
         }
       },
       error: (error) => {
@@ -145,7 +152,16 @@ export class SeekerProfileComponent implements OnInit {
   }
 
   getSkillsArray(): string[] {
-    return this.skills.split(',').filter(s => s.trim()).map(s => s.trim());
+    const skillsArray = this.skills.split(',')
+      .filter(s => s.trim())
+      .map(s => s.trim());
+    
+    // Remove duplicates (case-insensitive)
+    const uniqueSkills = skillsArray.filter((skill, index, self) => 
+      index === self.findIndex(s => s.toLowerCase() === skill.toLowerCase())
+    );
+    
+    return uniqueSkills;
   }
 
   getAvatarUrl(): string {
@@ -210,7 +226,7 @@ export class SeekerProfileComponent implements OnInit {
         this.isUploadingResume = false;
         if (response.success && response.url) {
           this.resumeUrl = response.url;
-          alert('Resume uploaded successfully!');
+          this.toastService.success('Resume uploaded successfully!');
         }
       },
       error: (error) => {
@@ -233,7 +249,7 @@ export class SeekerProfileComponent implements OnInit {
         if (response.success && response.url) {
           this.avatarUrl = response.url;
           this.user.avatar = response.url;
-          alert('Avatar uploaded successfully!');
+          this.toastService.success('Avatar uploaded successfully!');
         }
       },
       error: (error) => {
