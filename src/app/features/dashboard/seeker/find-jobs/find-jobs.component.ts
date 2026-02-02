@@ -8,6 +8,7 @@ import { RecommendationService } from '../../../../shared/services/recommendatio
 import { Recommendation } from '../../../../shared/models/recommendation.model';
 import { AuthService } from '../../../../shared/services/auth.service';
 import { ProfileService } from '../../../../shared/services/profile.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-find-jobs',
@@ -130,7 +131,7 @@ export class FindJobsComponent implements OnInit {
       console.log('Full user object:', currentUser);
       console.log(
         'API URL will be:',
-        `http://localhost:9090/api/recommendations/user/${currentUser.id}`,
+        `${environment.apiUrl}/recommendations/user/${currentUser.id}`,
       );
 
       this.recommendationService

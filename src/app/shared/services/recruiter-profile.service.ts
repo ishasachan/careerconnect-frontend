@@ -6,11 +6,13 @@ import {
   SaveRecruiterProfileRequest,
 } from '../models/recruiter-profile.model';
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root',
 })
 export class RecruiterProfileService {
-  private apiUrl = 'http://localhost:9090/api/recruiter/profile';
+  private apiUrl = `${environment.apiUrl}/recruiter/profile`;
 
   constructor(private http: HttpClient) {}
 

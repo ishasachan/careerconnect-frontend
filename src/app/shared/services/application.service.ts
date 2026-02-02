@@ -6,12 +6,13 @@ import {
   ApplicationResponse,
   ApplicationsResponse,
 } from '../models/application.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicationService {
-  private apiUrl = 'http://localhost:9090/api/applications';
+  private apiUrl = `${environment.apiUrl}/applications`;
 
   constructor(private http: HttpClient) {}
 

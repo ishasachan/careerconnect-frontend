@@ -7,11 +7,13 @@ import {
   JobSearchParams,
 } from '../models/job.model';
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root',
 })
 export class JobService {
-  private apiUrl = 'http://localhost:9090/api/jobs';
+  private apiUrl = `${environment.apiUrl}/jobs`;
 
   constructor(private http: HttpClient) {}
 
