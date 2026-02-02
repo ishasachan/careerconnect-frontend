@@ -7,7 +7,6 @@ export interface Recommendation {
   skills: string[];
   match: number;
 }
-
 export interface RecommendationsResponse {
   success: boolean;
   message: string;

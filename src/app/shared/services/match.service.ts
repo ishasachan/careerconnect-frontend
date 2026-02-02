@@ -15,7 +15,7 @@ export interface MatchResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MatchService {
   private apiUrl = 'http://localhost:9090/api';
@@ -25,7 +25,7 @@ export class MatchService {
   checkCompatibility(userId: number, jobId: number): Observable<MatchResponse> {
     return this.http.post<MatchResponse>(`${this.apiUrl}/match/check`, {
       userId,
-      jobId
+      jobId,
     });
   }
 }

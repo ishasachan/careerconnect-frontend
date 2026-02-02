@@ -20,24 +20,17 @@
       <!-- Search Input -->
       <div class="md:col-span-2">
         <div class="relative">
-          <input 
-            type="text" 
-            placeholder="Search by job title, company, or keywords..."
-            [(ngModel)]="searchKeyword"
+          <input type="text" placeholder="Search by job title, company, or keywords..." [(ngModel)]="searchKeyword"
             (keyup.enter)="searchJobs()"
-            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors"
-          />
+            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors" />
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
         </div>
       </div>
 
       <!-- Job Type Filter -->
       <div>
-        <select 
-          [(ngModel)]="selectedJobType"
-          (change)="searchJobs()"
-          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors appearance-none cursor-pointer"
-        >
+        <select [(ngModel)]="selectedJobType" (change)="searchJobs()"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors appearance-none cursor-pointer">
           <option value="">All Types</option>
           <option *ngFor="let type of jobTypes.slice(1)" [value]="type">{{ type }}</option>
         </select>
@@ -45,11 +38,8 @@
 
       <!-- Location Filter -->
       <div>
-        <select 
-          [(ngModel)]="selectedLocation"
-          (change)="searchJobs()"
-          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors appearance-none cursor-pointer"
-        >
+        <select [(ngModel)]="selectedLocation" (change)="searchJobs()"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors appearance-none cursor-pointer">
           <option value="">All Locations</option>
           <option *ngFor="let location of locations.slice(1)" [value]="location">{{ location }}</option>
         </select>
@@ -58,11 +48,8 @@
 
     <!-- Search Button -->
     <div class="mt-4">
-      <button
-        (click)="searchJobs()"
-        [disabled]="isLoading"
-        class="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
-      >
+      <button (click)="searchJobs()" [disabled]="isLoading"
+        class="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50 flex items-center gap-2">
         <i *ngIf="!isLoading" class="fas fa-search"></i>
         <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
         <span>{{ isLoading ? 'Searching...' : 'Search Jobs' }}</span>
@@ -73,23 +60,23 @@
     <div class="mt-4 flex items-center justify-between" *ngIf="searchKeyword || selectedJobType || selectedLocation">
       <div class="flex items-center gap-2 flex-wrap">
         <span class="text-sm text-slate-600">Active filters:</span>
-        <span *ngIf="searchKeyword" class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full flex items-center gap-1">
+        <span *ngIf="searchKeyword"
+          class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full flex items-center gap-1">
           "{{ searchKeyword }}"
           <i class="fas fa-times cursor-pointer" (click)="searchKeyword = ''"></i>
         </span>
-        <span *ngIf="selectedJobType" class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full flex items-center gap-1">
+        <span *ngIf="selectedJobType"
+          class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full flex items-center gap-1">
           {{ selectedJobType }}
           <i class="fas fa-times cursor-pointer" (click)="selectedJobType = ''"></i>
         </span>
-        <span *ngIf="selectedLocation" class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full flex items-center gap-1">
+        <span *ngIf="selectedLocation"
+          class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full flex items-center gap-1">
           {{ selectedLocation }}
           <i class="fas fa-times cursor-pointer" (click)="selectedLocation = ''"></i>
         </span>
       </div>
-      <button 
-        (click)="clearFilters()"
-        class="text-sm text-slate-600 hover:text-slate-900 font-medium"
-      >
+      <button (click)="clearFilters()" class="text-sm text-slate-600 hover:text-slate-900 font-medium">
         Clear All
       </button>
     </div>
@@ -116,11 +103,9 @@
 
       <!-- Jobs Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6" *ngIf="jobs.length > 0 && !isLoading">
-        <div 
-          *ngFor="let job of jobs"
+        <div *ngFor="let job of jobs"
           class="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer group"
-          (click)="viewJobDetails(job)"
-        >
+          (click)="viewJobDetails(job)">
           <div class="flex justify-between items-start mb-4">
             <div>
               <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
@@ -128,7 +113,8 @@
               </h3>
               <p class="text-indigo-600 font-medium text-sm">{{ job.company }}</p>
             </div>
-            <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full uppercase tracking-wider">
+            <span
+              class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full uppercase tracking-wider">
               {{ job.type }}
             </span>
           </div>
@@ -164,10 +150,8 @@
         <i class="fas fa-search text-6xl text-slate-300 mb-4"></i>
         <h3 class="text-xl font-bold text-slate-900 mb-2">No jobs found</h3>
         <p class="text-slate-500 mb-6">Try adjusting your filters or search keywords</p>
-        <button 
-          (click)="clearFilters()"
-          class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors"
-        >
+        <button (click)="clearFilters()"
+          class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors">
           Clear Filters
         </button>
       </div>
@@ -175,17 +159,19 @@
 
     <!-- AI Companion Card (Right Side) -->
     <div class="lg:col-span-1" *ngIf="!isLoading">
-      <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-2xl p-6 text-white sticky top-6 shadow-2xl border border-slate-700/50">
+      <div
+        class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-2xl p-6 text-white sticky top-6 shadow-2xl border border-slate-700/50">
         <!-- Animated Background Pattern -->
         <div class="absolute inset-0 opacity-10">
           <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500 rounded-full blur-3xl"></div>
           <div class="absolute bottom-0 left-0 w-32 h-32 bg-purple-500 rounded-full blur-3xl"></div>
         </div>
-        
+
         <!-- Header -->
         <div class="relative mb-6">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
               <i class="fas fa-magic text-white text-lg"></i>
             </div>
             <div>
@@ -216,7 +202,8 @@
           <!-- Profile Incomplete State -->
           <div *ngIf="!isLoadingRecommendations && !isProfileComplete" class="text-center py-8">
             <div class="relative inline-block mb-4">
-              <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/30">
+              <div
+                class="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/30">
                 <i class="fas fa-user-lock text-amber-400 text-3xl"></i>
               </div>
               <div class="absolute -top-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center">
@@ -227,8 +214,7 @@
             <p class="text-xs text-slate-400 mb-4 leading-relaxed px-4">
               Complete your profile to unlock AI-powered job recommendations tailored just for you
             </p>
-            <button 
-              (click)="navigateToProfile()" 
+            <button (click)="navigateToProfile()"
               class="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
               <i class="fas fa-user-edit mr-2"></i>
               Complete Profile Now
@@ -236,28 +222,28 @@
           </div>
 
           <!-- Recommendations List -->
-          <div 
-            *ngFor="let rec of recommendations; let i = index" 
-            (click)="viewRecommendedJob(rec.jobId)"
+          <div *ngFor="let rec of recommendations; let i = index" (click)="viewRecommendedJob(rec.jobId)"
             class="group bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/70 hover:border-indigo-500/50 transition-all cursor-pointer hover:shadow-xl relative overflow-hidden">
             <!-- Match Badge -->
             <div class="absolute top-3 right-3">
               <div class="relative">
-                <span class="px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-500 text-white text-xs font-bold rounded-full shadow-lg">
+                <span
+                  class="px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-500 text-white text-xs font-bold rounded-full shadow-lg">
                   {{ rec.match }}% Match
                 </span>
                 <div class="absolute inset-0 bg-emerald-400 rounded-full blur-md opacity-30"></div>
               </div>
             </div>
-            
+
             <div class="pr-20">
-              <p class="font-bold text-sm text-white mb-1 group-hover:text-indigo-300 transition-colors">{{ rec.title }}</p>
+              <p class="font-bold text-sm text-white mb-1 group-hover:text-indigo-300 transition-colors">{{ rec.title }}
+              </p>
               <p class="text-xs text-slate-400 uppercase tracking-wide mb-2 flex items-center gap-1">
                 <i class="fas fa-building text-xs"></i>
                 {{ rec.company }}
               </p>
             </div>
-            
+
             <div class="flex items-center gap-2 text-xs text-slate-400 mb-3">
               <span class="flex items-center gap-1">
                 <i class="fas fa-map-marker-alt"></i>
@@ -269,18 +255,17 @@
                 {{ rec.salary }}
               </span>
             </div>
-            
+
             <div class="flex gap-1 flex-wrap">
-              <span *ngFor="let skill of rec.skills.slice(0, 3)" 
-                    class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded-md border border-indigo-500/30">
+              <span *ngFor="let skill of rec.skills.slice(0, 3)"
+                class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded-md border border-indigo-500/30">
                 {{ skill }}
               </span>
-              <span *ngIf="rec.skills.length > 3" 
-                    class="px-2 py-1 bg-slate-700/50 text-slate-400 text-xs rounded-md">
+              <span *ngIf="rec.skills.length > 3" class="px-2 py-1 bg-slate-700/50 text-slate-400 text-xs rounded-md">
                 +{{ rec.skills.length - 3 }}
               </span>
             </div>
-            
+
             <!-- Hover Arrow -->
             <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
               <i class="fas fa-arrow-right text-indigo-400"></i>
@@ -288,9 +273,11 @@
           </div>
 
           <!-- No Recommendations State (Profile Complete but no matches) -->
-          <div *ngIf="!isLoadingRecommendations && isProfileComplete && recommendations.length === 0" class="text-center py-8">
+          <div *ngIf="!isLoadingRecommendations && isProfileComplete && recommendations.length === 0"
+            class="text-center py-8">
             <div class="relative inline-block mb-4">
-              <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center border border-blue-500/30">
+              <div
+                class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center border border-blue-500/30">
                 <i class="fas fa-search text-blue-400 text-3xl"></i>
               </div>
             </div>
@@ -313,8 +300,7 @@
               </p>
             </div>
           </div>
-          <button 
-            (click)="navigateToProfile()"
+          <button (click)="navigateToProfile()"
             class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all text-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
             <i class="fas fa-sparkles mr-2"></i>
             Improve Recommendations

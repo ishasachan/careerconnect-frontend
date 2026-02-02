@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ProfileResponse, SaveProfileRequest } from '../models/profile.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProfileService {
   private apiUrl = 'http://localhost:9090/api/profile';

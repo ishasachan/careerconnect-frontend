@@ -13,7 +13,7 @@ import { Job } from '../../../shared/models/job.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './seeker-dashboard.component.html',
-  styleUrl: './seeker-dashboard.component.css'
+  styleUrl: './seeker-dashboard.component.css',
 })
 export class SeekerDashboardComponent implements OnInit {
   applications: Application[] = [];
@@ -26,7 +26,7 @@ export class SeekerDashboardComponent implements OnInit {
     totalApplications: 0,
     shortlisted: 0,
     savedJobs: 0,
-    profileCompletion: 0
+    profileCompletion: 0,
   };
 
   constructor(
@@ -34,7 +34,7 @@ export class SeekerDashboardComponent implements OnInit {
     private applicationService: ApplicationService,
     private jobService: JobService,
     private profileService: ProfileService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
@@ -54,10 +54,12 @@ export class SeekerDashboardComponent implements OnInit {
         if (response.success && response.data) {
           this.applications = response.data;
           this.stats.totalApplications = this.applications.length;
-          this.stats.shortlisted = this.applications.filter(app => app.status === 'SHORTLISTED').length;
+          this.stats.shortlisted = this.applications.filter(
+            (app) => app.status === 'SHORTLISTED',
+          ).length;
         }
       },
-      error: (error) => console.error('Error loading applications:', error)
+      error: (error) => console.error('Error loading applications:', error),
     });
 
     // Load recent jobs
@@ -71,7 +73,7 @@ export class SeekerDashboardComponent implements OnInit {
       error: (error) => {
         console.error('Error loading jobs:', error);
         this.isLoading = false;
-      }
+      },
     });
 
     // Load saved jobs count
@@ -88,7 +90,7 @@ export class SeekerDashboardComponent implements OnInit {
           this.calculateProfileCompletion(response.data);
         }
       },
-      error: (error) => console.error('Error loading profile:', error)
+      error: (error) => console.error('Error loading profile:', error),
     });
   }
 
@@ -98,10 +100,10 @@ export class SeekerDashboardComponent implements OnInit {
       profile.bio,
       profile.skills,
       profile.resumeUrl,
-      profile.avatarUrl
+      profile.avatarUrl,
     ];
-    
-    fields.forEach(field => {
+
+    fields.forEach((field) => {
       if (field && field.trim()) completed += 25;
     });
 
@@ -115,11 +117,11 @@ export class SeekerDashboardComponent implements OnInit {
 
   getStatusClass(status: string): string {
     const classes: { [key: string]: string } = {
-      'APPLIED': 'bg-gray-100 text-gray-700',
-      'UNDER_REVIEW': 'bg-yellow-100 text-yellow-700',
-      'SHORTLISTED': 'bg-green-100 text-green-700',
-      'INTERVIEW': 'bg-blue-100 text-blue-700',
-      'REJECTED': 'bg-red-100 text-red-700'
+      APPLIED: 'bg-gray-100 text-gray-700',
+      UNDER_REVIEW: 'bg-yellow-100 text-yellow-700',
+      SHORTLISTED: 'bg-green-100 text-green-700',
+      INTERVIEW: 'bg-blue-100 text-blue-700',
+      REJECTED: 'bg-red-100 text-red-700',
     };
     return classes[status] || 'bg-gray-100 text-gray-700';
   }

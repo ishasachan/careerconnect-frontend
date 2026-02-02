@@ -1,193 +1,186 @@
 <div class="p-8">
-  <!-- Header -->
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold text-slate-800">Manage Applicants</h1>
-    <p class="text-slate-500 mt-1">Review and shortlist candidates for your listings</p>
-  </div>
-  
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-      <div class="flex items-center justify-between mb-3">
-        <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">New Applications</div>
-        <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-          <i class="fa-solid fa-inbox text-blue-600 text-lg"></i>
-        </div>
-      </div>
-      <div class="text-4xl font-bold text-slate-800">{{ newApplicantsCount }}</div>
-      <p class="text-xs text-slate-500 mt-2">Pending review</p>
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-slate-800">Manage Applicants</h1>
+        <p class="text-slate-500 mt-1">Review and shortlist candidates for your listings</p>
     </div>
-    
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-      <div class="flex items-center justify-between mb-3">
-        <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Shortlisted</div>
-        <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
-          <i class="fa-solid fa-star text-purple-600 text-lg"></i>
-        </div>
-      </div>
-      <div class="text-4xl font-bold text-slate-800">{{ shortlistedCount }}</div>
-      <p class="text-xs text-slate-500 mt-2">Selected candidates</p>
-    </div>
-    
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-      <div class="flex items-center justify-between mb-3">
-        <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Interview</div>
-        <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
-          <i class="fa-solid fa-users text-indigo-600 text-lg"></i>
-        </div>
-      </div>
-      <div class="text-4xl font-bold text-slate-800">{{ interviewedCount }}</div>
-      <p class="text-xs text-slate-500 mt-2">In interview stage</p>
-    </div>
-    
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
-      <div class="flex items-center justify-between mb-3">
-        <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Hired</div>
-        <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
-          <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
-        </div>
-      </div>
-      <div class="text-4xl font-bold text-slate-800">{{ hiredCount }}</div>
-      <p class="text-xs text-slate-500 mt-2">Successfully placed</p>
-    </div>
-  </div>
 
-  <!-- Filter Dropdown -->
-  <div class="flex items-center gap-3 mb-6">
-    <label class="text-sm font-medium text-slate-700">Filter by Job:</label>
-    <select 
-      [(ngModel)]="selectedJobFilter"
-      class="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white min-w-[250px]">
-      <option value="all">All Job Postings</option>
-      <option *ngFor="let job of uniqueJobs" [value]="job.id">{{ job.title }}</option>
-    </select>
-  </div>
-
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="text-center py-16">
-    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-    <p class="text-slate-500 mt-4">Loading applicants...</p>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="errorMessage && !isLoading" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-    <div class="flex items-center gap-2">
-      <i class="fa-solid fa-exclamation-circle"></i>
-      <span>{{ errorMessage }}</span>
-    </div>
-  </div>
-
-  <!-- Applicants List -->
-  <div *ngIf="!isLoading" class="space-y-4">
-    <div *ngFor="let applicant of filteredApplicants" 
-         class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
-      <div class="flex items-start gap-6">
-        <!-- Avatar -->
-        <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-          <span class="text-2xl font-bold text-indigo-600">{{ getInitials(applicant.fullName) }}</span>
-        </div>
-
-        <!-- Main Content -->
-        <div class="flex-1">
-          <div class="flex items-start justify-between mb-3">
-            <div>
-              <div class="flex items-center gap-3 mb-2">
-                <h3 class="text-xl font-bold text-slate-800">{{ applicant.fullName }}</h3>
-                <span [class]="getStatusClass(applicant.status)" 
-                      class="px-3 py-1 rounded-full text-xs font-semibold">
-                  {{ applicant.status.replace('_', ' ') }}
-                </span>
-              </div>
-              <p class="text-sm text-slate-500 mb-1">
-                <span class="font-medium">Applied for:</span> 
-                <span class="text-indigo-600">{{ applicant.job.title }}</span>
-              </p>
-              <div class="flex items-center gap-4 text-sm text-slate-500">
-                <span class="flex items-center gap-1">
-                  <i class="fa-solid fa-clock"></i>
-                  Applied on {{ formatDate(applicant.appliedDate) }}
-                </span>
-                <span class="flex items-center gap-1">
-                  <i class="fa-solid fa-briefcase"></i>
-                  {{ applicant.yearsOfExperience }} years exp
-                </span>
-                <span class="flex items-center gap-1" *ngIf="applicant.currentCompany">
-                  <i class="fa-solid fa-building"></i>
-                  {{ applicant.currentCompany }}
-                </span>
-              </div>
-              <div class="flex items-center gap-4 text-sm text-slate-500 mt-1">
-                <span class="flex items-center gap-1">
-                  <i class="fa-solid fa-envelope"></i>
-                  {{ applicant.email }}
-                </span>
-                <span class="flex items-center gap-1">
-                  <i class="fa-solid fa-phone"></i>
-                  {{ applicant.phone }}
-                </span>
-              </div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-3">
+                <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">New Applications</div>
+                <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <i class="fa-solid fa-inbox text-blue-600 text-lg"></i>
+                </div>
             </div>
-
-            <!-- Actions -->
-            <div class="flex items-center gap-2">
-              <button 
-                (click)="viewResume(applicant)"
-                class="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium flex items-center gap-2">
-                <i class="fa-solid fa-file-lines"></i>
-                View Resume
-              </button>
-              <button 
-                (click)="resetStatus(applicant)"
-                class="px-4 py-2 text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors text-sm font-medium">
-                Reset Status
-              </button>
-            </div>
-          </div>
-
-          <!-- Status Update Actions -->
-          <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
-            <span class="text-sm text-slate-600 font-medium">Update Status:</span>
-            <button 
-              (click)="updateStatus(applicant, 'SHORTLISTED')"
-              [class.opacity-50]="applicant.status === 'SHORTLISTED'"
-              [disabled]="applicant.status === 'SHORTLISTED'"
-              class="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors text-sm font-medium disabled:cursor-not-allowed">
-              Shortlist
-            </button>
-            <button 
-              (click)="updateStatus(applicant, 'INTERVIEW')"
-              [class.opacity-50]="applicant.status === 'INTERVIEW'"
-              [disabled]="applicant.status === 'INTERVIEW'"
-              class="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors text-sm font-medium disabled:cursor-not-allowed">
-              Interview
-            </button>
-            <button 
-              (click)="updateStatus(applicant, 'HIRED')"
-              [class.opacity-50]="applicant.status === 'HIRED'"
-              [disabled]="applicant.status === 'HIRED'"
-              class="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium disabled:cursor-not-allowed">
-              Hire
-            </button>
-            <button 
-              (click)="updateStatus(applicant, 'REJECTED')"
-              [class.opacity-50]="applicant.status === 'REJECTED'"
-              [disabled]="applicant.status === 'REJECTED'"
-              class="px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium disabled:cursor-not-allowed">
-              Reject
-            </button>
-          </div>
+            <div class="text-4xl font-bold text-slate-800">{{ newApplicantsCount }}</div>
+            <p class="text-xs text-slate-500 mt-2">Pending review</p>
         </div>
-      </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-3">
+                <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Shortlisted</div>
+                <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+                    <i class="fa-solid fa-star text-purple-600 text-lg"></i>
+                </div>
+            </div>
+            <div class="text-4xl font-bold text-slate-800">{{ shortlistedCount }}</div>
+            <p class="text-xs text-slate-500 mt-2">Selected candidates</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-3">
+                <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Interview</div>
+                <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
+                    <i class="fa-solid fa-users text-indigo-600 text-lg"></i>
+                </div>
+            </div>
+            <div class="text-4xl font-bold text-slate-800">{{ interviewedCount }}</div>
+            <p class="text-xs text-slate-500 mt-2">In interview stage</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-3">
+                <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Hired</div>
+                <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+                    <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
+                </div>
+            </div>
+            <div class="text-4xl font-bold text-slate-800">{{ hiredCount }}</div>
+            <p class="text-xs text-slate-500 mt-2">Successfully placed</p>
+        </div>
     </div>
 
-    <!-- Empty State -->
-    <div *ngIf="filteredApplicants.length === 0 && !isLoading" class="text-center py-16">
-      <i class="fa-solid fa-users text-slate-300 text-5xl mb-4"></i>
-      <h3 class="text-lg font-semibold text-slate-700 mb-2">No Applicants Found</h3>
-      <p class="text-slate-500">
-        <span *ngIf="selectedJobFilter === 'all'">You haven't received any applications yet.</span>
-        <span *ngIf="selectedJobFilter !== 'all'">No applicants for this job posting.</span>
-      </p>
+    <!-- Filter Dropdown -->
+    <div class="flex items-center gap-3 mb-6">
+        <label class="text-sm font-medium text-slate-700">Filter by Job:</label>
+        <select [(ngModel)]="selectedJobFilter"
+            class="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white min-w-[250px]">
+            <option value="all">All Job Postings</option>
+            <option *ngFor="let job of uniqueJobs" [value]="job.id">{{ job.title }}</option>
+        </select>
     </div>
-  </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-16">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <p class="text-slate-500 mt-4">Loading applicants...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading"
+        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            <span>{{ errorMessage }}</span>
+        </div>
+    </div>
+
+    <!-- Applicants List -->
+    <div *ngIf="!isLoading" class="space-y-4">
+        <div *ngFor="let applicant of filteredApplicants"
+            class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-start gap-6">
+                <!-- Avatar -->
+                <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                    <span class="text-2xl font-bold text-indigo-600">{{ getInitials(applicant.fullName) }}</span>
+                </div>
+
+                <!-- Main Content -->
+                <div class="flex-1">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <h3 class="text-xl font-bold text-slate-800">{{ applicant.fullName }}</h3>
+                                <span [class]="getStatusClass(applicant.status)"
+                                    class="px-3 py-1 rounded-full text-xs font-semibold">
+                                    {{ applicant.status.replace('_', ' ') }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-slate-500 mb-1">
+                                <span class="font-medium">Applied for:</span>
+                                <span class="text-indigo-600">{{ applicant.job.title }}</span>
+                            </p>
+                            <div class="flex items-center gap-4 text-sm text-slate-500">
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-solid fa-clock"></i>
+                                    Applied on {{ formatDate(applicant.appliedDate) }}
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-solid fa-briefcase"></i>
+                                    {{ applicant.yearsOfExperience }} years exp
+                                </span>
+                                <span class="flex items-center gap-1" *ngIf="applicant.currentCompany">
+                                    <i class="fa-solid fa-building"></i>
+                                    {{ applicant.currentCompany }}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4 text-sm text-slate-500 mt-1">
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    {{ applicant.email }}
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-solid fa-phone"></i>
+                                    {{ applicant.phone }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex items-center gap-2">
+                            <button (click)="viewResume(applicant)"
+                                class="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-file-lines"></i>
+                                View Resume
+                            </button>
+                            <button (click)="resetStatus(applicant)"
+                                class="px-4 py-2 text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors text-sm font-medium">
+                                Reset Status
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Status Update Actions -->
+                    <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
+                        <span class="text-sm text-slate-600 font-medium">Update Status:</span>
+                        <button (click)="updateStatus(applicant, 'SHORTLISTED')"
+                            [class.opacity-50]="applicant.status === 'SHORTLISTED'"
+                            [disabled]="applicant.status === 'SHORTLISTED'"
+                            class="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors text-sm font-medium disabled:cursor-not-allowed">
+                            Shortlist
+                        </button>
+                        <button (click)="updateStatus(applicant, 'INTERVIEW')"
+                            [class.opacity-50]="applicant.status === 'INTERVIEW'"
+                            [disabled]="applicant.status === 'INTERVIEW'"
+                            class="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors text-sm font-medium disabled:cursor-not-allowed">
+                            Interview
+                        </button>
+                        <button (click)="updateStatus(applicant, 'HIRED')"
+                            [class.opacity-50]="applicant.status === 'HIRED'" [disabled]="applicant.status === 'HIRED'"
+                            class="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium disabled:cursor-not-allowed">
+                            Hire
+                        </button>
+                        <button (click)="updateStatus(applicant, 'REJECTED')"
+                            [class.opacity-50]="applicant.status === 'REJECTED'"
+                            [disabled]="applicant.status === 'REJECTED'"
+                            class="px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium disabled:cursor-not-allowed">
+                            Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="filteredApplicants.length === 0 && !isLoading" class="text-center py-16">
+            <i class="fa-solid fa-users text-slate-300 text-5xl mb-4"></i>
+            <h3 class="text-lg font-semibold text-slate-700 mb-2">No Applicants Found</h3>
+            <p class="text-slate-500">
+                <span *ngIf="selectedJobFilter === 'all'">You haven't received any applications yet.</span>
+                <span *ngIf="selectedJobFilter !== 'all'">No applicants for this job posting.</span>
+            </p>
+        </div>
+    </div>
 </div>

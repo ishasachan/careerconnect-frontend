@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
           'bg-green-600 text-white': toast.type === 'success',
           'bg-red-600 text-white': toast.type === 'error',
           'bg-yellow-600 text-white': toast.type === 'warning',
-          'bg-blue-600 text-white': toast.type === 'info'
+          'bg-blue-600 text-white': toast.type === 'info',
         }"
       >
         <i
@@ -25,29 +25,31 @@ import { Subscription } from 'rxjs';
             'fas fa-check-circle': toast.type === 'success',
             'fas fa-times-circle': toast.type === 'error',
             'fas fa-exclamation-triangle': toast.type === 'warning',
-            'fas fa-info-circle': toast.type === 'info'
+            'fas fa-info-circle': toast.type === 'info',
           }"
         ></i>
         <span class="font-semibold flex-1">{{ toast.message }}</span>
       </div>
     </div>
   `,
-  styles: [`
-    @keyframes fade-in {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
+  styles: [
+    `
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
 
-    .animate-fade-in {
-      animation: fade-in 0.3s ease-out;
-    }
-  `]
+      .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+      }
+    `,
+  ],
 })
 export class ToastComponent implements OnInit, OnDestroy {
   toasts: (Toast & { id: number })[] = [];

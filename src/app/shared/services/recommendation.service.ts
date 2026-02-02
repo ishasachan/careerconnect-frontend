@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { RecommendationsResponse } from '../models/recommendation.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RecommendationService {
   private apiUrl = 'http://localhost:9090/api/recommendations';
@@ -12,6 +12,8 @@ export class RecommendationService {
   constructor(private http: HttpClient) {}
 
   getUserRecommendations(userId: number): Observable<RecommendationsResponse> {
-    return this.http.get<RecommendationsResponse>(`${this.apiUrl}/user/${userId}`);
+    return this.http.get<RecommendationsResponse>(
+      `${this.apiUrl}/user/${userId}`,
+    );
   }
 }

@@ -8,13 +8,17 @@ export interface Toast {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ToastService {
   private toastSubject = new Subject<Toast>();
   toast$ = this.toastSubject.asObservable();
 
-  show(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info', duration: number = 3000) {
+  show(
+    message: string,
+    type: 'success' | 'error' | 'warning' | 'info' = 'info',
+    duration: number = 3000,
+  ) {
     this.toastSubject.next({ message, type, duration });
   }
 

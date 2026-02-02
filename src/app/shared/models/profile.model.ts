@@ -9,7 +9,6 @@ export interface ProfileUser {
   email: string;
   role: string;
 }
-
 export interface Profile {
   id: number;
   user: ProfileUser;

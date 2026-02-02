@@ -14,7 +14,7 @@ import { ProfileService } from '../../../../shared/services/profile.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './find-jobs.component.html',
-  styleUrl: './find-jobs.component.css'
+  styleUrl: './find-jobs.component.css',
 })
 export class FindJobsComponent implements OnInit {
   searchKeyword = '';
@@ -22,7 +22,7 @@ export class FindJobsComponent implements OnInit {
   selectedLocation = '';
   isLoading = false;
   errorMessage = '';
-  
+
   jobs: Job[] = [];
   recommendations: Recommendation[] = [];
   isProfileComplete = false;
@@ -38,7 +38,7 @@ export class FindJobsComponent implements OnInit {
     private jobService: JobService,
     private recommendationService: RecommendationService,
     private authService: AuthService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
   ) {}
 
   ngOnInit() {
@@ -53,18 +53,22 @@ export class FindJobsComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           // Extract unique locations from ACTIVE jobs only
-          const activeJobs = response.data.filter(job => job.status === 'ACTIVE');
-          const uniqueLocations = [...new Set(activeJobs.map(job => job.location))]
-            .filter(loc => loc && loc.trim() !== '')
+          const activeJobs = response.data.filter(
+            (job) => job.status === 'ACTIVE',
+          );
+          const uniqueLocations = [
+            ...new Set(activeJobs.map((job) => job.location)),
+          ]
+            .filter((loc) => loc && loc.trim() !== '')
             .sort();
-          
+
           this.locations = ['All Locations', ...uniqueLocations];
         }
       },
       error: (error) => {
         console.error('Error loading locations:', error);
         // Keep default 'All Locations' if error
-      }
+      },
     });
   }
 
@@ -85,15 +89,19 @@ export class FindJobsComponent implements OnInit {
           const profile = response.data;
           // Check if profile has essential fields (skills is a string, check if it's not empty)
           const hasSkills = profile.skills && profile.skills.trim().length > 0;
-          this.isProfileComplete = !!(profile.bio && hasSkills && profile.resumeUrl);
-          
+          this.isProfileComplete = !!(
+            profile.bio &&
+            hasSkills &&
+            profile.resumeUrl
+          );
+
           console.log('Profile completeness check:', {
             bio: !!profile.bio,
             skills: hasSkills,
             resumeUrl: !!profile.resumeUrl,
-            isComplete: this.isProfileComplete
+            isComplete: this.isProfileComplete,
           });
-          
+
           if (this.isProfileComplete) {
             // Profile is complete, load recommendations
             this.loadRecommendations();
@@ -111,7 +119,7 @@ export class FindJobsComponent implements OnInit {
         console.error('Error checking profile:', error);
         this.isProfileComplete = false;
         this.isLoadingRecommendations = false;
-      }
+      },
     });
   }
 
@@ -120,31 +128,40 @@ export class FindJobsComponent implements OnInit {
     if (currentUser) {
       console.log('Loading recommendations for user:', currentUser.id);
       console.log('Full user object:', currentUser);
-      console.log('API URL will be:', `http://localhost:9090/api/recommendations/user/${currentUser.id}`);
-      
-      this.recommendationService.getUserRecommendations(currentUser.id).subscribe({
-        next: (response) => {
-          console.log('Recommendations response:', response);
-          this.isLoadingRecommendations = false;
-          if (response.success && response.data && response.data.length > 0) {
-            this.recommendations = response.data.slice(0, 3); // Get top 3
-            console.log('Loaded recommendations:', this.recommendations);
-          } else {
-            console.log('No recommendations available. Backend returned empty array.');
-            console.log('This usually means:');
-            console.log('1. Your profile skills don\'t match any active jobs');
-            console.log('2. There are no active jobs in the system');
-            console.log('3. The recommendation algorithm needs to be triggered on the backend');
+      console.log(
+        'API URL will be:',
+        `http://localhost:9090/api/recommendations/user/${currentUser.id}`,
+      );
+
+      this.recommendationService
+        .getUserRecommendations(currentUser.id)
+        .subscribe({
+          next: (response) => {
+            console.log('Recommendations response:', response);
+            this.isLoadingRecommendations = false;
+            if (response.success && response.data && response.data.length > 0) {
+              this.recommendations = response.data.slice(0, 3); // Get top 3
+              console.log('Loaded recommendations:', this.recommendations);
+            } else {
+              console.log(
+                'No recommendations available. Backend returned empty array.',
+              );
+              console.log('This usually means:');
+              console.log("1. Your profile skills don't match any active jobs");
+              console.log('2. There are no active jobs in the system');
+              console.log(
+                '3. The recommendation algorithm needs to be triggered on the backend',
+              );
+              this.recommendations = [];
+            }
+          },
+          error: (error) => {
+            console.error('Error loading recommendations:', error);
+            console.error('Error details:', error.error);
+            this.isLoadingRecommendations = false;
             this.recommendations = [];
-          }
-        },
-        error: (error) => {
-          console.error('Error loading recommendations:', error);
-          console.error('Error details:', error.error);
-          this.isLoadingRecommendations = false;
-          this.recommendations = [];
-        }
-      });
+          },
+        });
     } else {
       console.log('No current user - cannot load recommendations');
       this.isLoadingRecommendations = false;
@@ -157,8 +174,14 @@ export class FindJobsComponent implements OnInit {
 
     const searchParams = {
       keyword: this.searchKeyword || undefined,
-      type: this.selectedJobType && this.selectedJobType !== 'All Types' ? this.selectedJobType : undefined,
-      location: this.selectedLocation && this.selectedLocation !== 'All Locations' ? this.selectedLocation : undefined
+      type:
+        this.selectedJobType && this.selectedJobType !== 'All Types'
+          ? this.selectedJobType
+          : undefined,
+      location:
+        this.selectedLocation && this.selectedLocation !== 'All Locations'
+          ? this.selectedLocation
+          : undefined,
     };
 
     this.jobService.getJobs(searchParams).subscribe({
@@ -166,21 +189,21 @@ export class FindJobsComponent implements OnInit {
         this.isLoading = false;
         if (response.success && response.data) {
           // Filter to show only ACTIVE jobs (exclude PAUSED, CLOSED, and deleted jobs)
-          this.jobs = response.data.filter(job => job.status === 'ACTIVE');
+          this.jobs = response.data.filter((job) => job.status === 'ACTIVE');
         }
       },
       error: (error) => {
         this.isLoading = false;
         console.error('Error fetching jobs:', error);
         this.errorMessage = 'Failed to load jobs. Please try again.';
-      }
+      },
     });
   }
 
   viewJobDetails(job: Job) {
     this.router.navigate(['/dashboard/seeker/find-jobs', job.id]);
   }
-  
+
   viewRecommendedJob(jobId: number) {
     this.router.navigate(['/dashboard/seeker/find-jobs', jobId]);
   }
@@ -197,14 +220,17 @@ export class FindJobsComponent implements OnInit {
   }
 
   getRequirementsArray(requirements: string): string[] {
-    return requirements.split(',').filter(r => r.trim()).map(r => r.trim());
+    return requirements
+      .split(',')
+      .filter((r) => r.trim())
+      .map((r) => r.trim());
   }
 
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   }
 }

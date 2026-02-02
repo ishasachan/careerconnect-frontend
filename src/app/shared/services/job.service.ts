@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { JobResponse, JobsResponse, JobSearchParams } from '../models/job.model';
+import {
+  JobResponse,
+  JobsResponse,
+  JobSearchParams,
+} from '../models/job.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JobService {
   private apiUrl = 'http://localhost:9090/api/jobs';
@@ -13,7 +17,7 @@ export class JobService {
 
   getJobs(searchParams?: JobSearchParams): Observable<JobsResponse> {
     let params = new HttpParams();
-    
+
     if (searchParams) {
       if (searchParams.keyword) {
         params = params.set('keyword', searchParams.keyword);
@@ -35,7 +39,10 @@ export class JobService {
 
   // Recruiter APIs
   postJob(recruiterId: number, jobData: any): Observable<JobResponse> {
-    return this.http.post<JobResponse>(`${this.apiUrl}/recruiter/${recruiterId}`, jobData);
+    return this.http.post<JobResponse>(
+      `${this.apiUrl}/recruiter/${recruiterId}`,
+      jobData,
+    );
   }
 
   updateJob(jobId: number, jobData: any): Observable<JobResponse> {
@@ -43,7 +50,9 @@ export class JobService {
   }
 
   deleteJob(jobId: number): Observable<{ success: boolean; message: string }> {
-    return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/${jobId}`);
+    return this.http.delete<{ success: boolean; message: string }>(
+      `${this.apiUrl}/${jobId}`,
+    );
   }
 
   pauseJob(jobId: number): Observable<JobResponse> {
@@ -63,6 +72,8 @@ export class JobService {
   }
 
   getRecruiterJobs(recruiterId: number): Observable<JobsResponse> {
-    return this.http.get<JobsResponse>(`${this.apiUrl}/recruiter/${recruiterId}`);
+    return this.http.get<JobsResponse>(
+      `${this.apiUrl}/recruiter/${recruiterId}`,
+    );
   }
 }

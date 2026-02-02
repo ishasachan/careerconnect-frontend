@@ -8,7 +8,7 @@ import { Job } from '../../../../shared/models/job.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './saved-jobs.component.html',
-  styleUrl: './saved-jobs.component.css'
+  styleUrl: './saved-jobs.component.css',
 })
 export class SavedJobsComponent implements OnInit {
   savedJobs: Job[] = [];
@@ -30,7 +30,7 @@ export class SavedJobsComponent implements OnInit {
   }
 
   removeSavedJob(jobId: number) {
-    this.savedJobs = this.savedJobs.filter(job => job.id !== jobId);
+    this.savedJobs = this.savedJobs.filter((job) => job.id !== jobId);
     localStorage.setItem('savedJobs', JSON.stringify(this.savedJobs));
   }
 
@@ -46,7 +46,7 @@ export class SavedJobsComponent implements OnInit {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   }
 }

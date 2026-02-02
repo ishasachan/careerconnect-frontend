@@ -12,7 +12,7 @@ export interface NavbarUser {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
   @Input() user!: NavbarUser;
@@ -20,6 +20,10 @@ export class NavbarComponent {
   @Input() hasNotification: boolean = false;
 
   getInitials(name: string): string {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
   }
 }

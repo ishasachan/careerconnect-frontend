@@ -10,7 +10,7 @@ import { AuthService } from '../../../../shared/services/auth.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './applications.component.html',
-  styleUrl: './applications.component.css'
+  styleUrl: './applications.component.css',
 })
 export class ApplicationsComponent implements OnInit {
   applications: Application[] = [];
@@ -25,19 +25,19 @@ export class ApplicationsComponent implements OnInit {
     { value: 'SHORTLISTED', label: 'Shortlisted', icon: 'fa-star' },
     { value: 'INTERVIEW', label: 'Interview', icon: 'fa-users' },
     { value: 'HIRED', label: 'Hired', icon: 'fa-circle-check' },
-    { value: 'REJECTED', label: 'Rejected', icon: 'fa-times-circle' }
+    { value: 'REJECTED', label: 'Rejected', icon: 'fa-times-circle' },
   ];
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
     // Check for status query parameter
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params['status']) {
         this.selectedFilter = params['status'];
       }
@@ -68,7 +68,7 @@ export class ApplicationsComponent implements OnInit {
         this.isLoading = false;
         console.error('Error loading applications:', error);
         this.errorMessage = 'Failed to load applications. Please try again.';
-      }
+      },
     });
   }
 
@@ -77,7 +77,7 @@ export class ApplicationsComponent implements OnInit {
       this.filteredApplications = this.applications;
     } else {
       this.filteredApplications = this.applications.filter(
-        app => app.status === this.selectedFilter
+        (app) => app.status === this.selectedFilter,
       );
     }
   }
@@ -87,26 +87,26 @@ export class ApplicationsComponent implements OnInit {
     this.applyFilter();
     // Update URL without reloading
     if (filter === 'ALL') {
-      this.router.navigate([], { 
+      this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: {} 
+        queryParams: {},
       });
     } else {
-      this.router.navigate([], { 
+      this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { status: filter } 
+        queryParams: { status: filter },
       });
     }
   }
 
   getStatusClass(status: string): string {
     const statusClasses: { [key: string]: string } = {
-      'APPLIED': 'bg-blue-100 text-blue-700',
-      'UNDER_REVIEW': 'bg-yellow-100 text-yellow-700',
-      'SHORTLISTED': 'bg-purple-100 text-purple-700',
-      'INTERVIEW': 'bg-indigo-100 text-indigo-700',
-      'HIRED': 'bg-green-100 text-green-700',
-      'REJECTED': 'bg-red-100 text-red-700'
+      APPLIED: 'bg-blue-100 text-blue-700',
+      UNDER_REVIEW: 'bg-yellow-100 text-yellow-700',
+      SHORTLISTED: 'bg-purple-100 text-purple-700',
+      INTERVIEW: 'bg-indigo-100 text-indigo-700',
+      HIRED: 'bg-green-100 text-green-700',
+      REJECTED: 'bg-red-100 text-red-700',
     };
     return statusClasses[status] || 'bg-gray-100 text-gray-700';
   }
@@ -120,14 +120,14 @@ export class ApplicationsComponent implements OnInit {
   }
 
   formatDate(date: string): string {
-    return new Intl.DateTimeFormat('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
     }).format(new Date(date));
   }
 
   getStatusCount(status: string): number {
-    return this.applications.filter(app => app.status === status).length;
+    return this.applications.filter((app) => app.status === status).length;
   }
 }

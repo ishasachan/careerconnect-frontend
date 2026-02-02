@@ -1,11 +1,12 @@
 <div class="bg-white rounded-lg shadow-sm p-6">
-  <div class="flex items-center justify-between">
-    <div>
-      <p class="text-sm text-slate-500 mb-1">{{ label }}</p>
-      <p class="text-3xl font-bold" [ngClass]="valueColor ? valueColor : 'text-slate-800'">{{ value }}</p>
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-sm text-slate-500 mb-1">{{ label }}</p>
+            <p class="text-3xl font-bold" [ngClass]="valueColor ? valueColor : 'text-slate-800'">{{ value }}</p>
+        </div>
+        <div *ngIf="icon" class="w-12 h-12 rounded-lg flex items-center justify-center"
+            [ngClass]="iconBgColor || 'bg-indigo-100'">
+            <i [class]="icon + ' text-xl'" [ngClass]="iconColor || 'text-indigo-600'"></i>
+        </div>
     </div>
-    <div *ngIf="icon" class="w-12 h-12 rounded-lg flex items-center justify-center" [ngClass]="iconBgColor || 'bg-indigo-100'">
-      <i [class]="icon + ' text-xl'" [ngClass]="iconColor || 'text-indigo-600'"></i>
-    </div>
-  </div>
 </div>

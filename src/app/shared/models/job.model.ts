@@ -20,13 +20,11 @@ export interface JobResponse {
   message: string;
   data: Job;
 }
-
 export interface JobsResponse {
   success: boolean;
   message: string;
   data: Job[];
 }
-
 export interface JobSearchParams {
   keyword?: string;
   type?: string;

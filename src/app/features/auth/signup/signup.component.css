@@ -28,7 +28,7 @@
 }
 
 .primary-btn:disabled:hover {
-  background: #4F46E5 !important;
+  background: #4f46e5 !important;
   transform: none !important;
 }
 
@@ -58,7 +58,7 @@ button:not(:disabled):active {
 }
 
 .validation-tooltip::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 100%;
   left: 12px;
@@ -67,7 +67,7 @@ button:not(:disabled):active {
 }
 
 .validation-tooltip::before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 100%;
   left: 11px;

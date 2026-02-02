@@ -15,7 +15,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './job-details.component.html',
-  styleUrl: './job-details.component.css'
+  styleUrl: './job-details.component.css',
 })
 export class JobDetailsComponent implements OnInit {
   job: Job | null = null;
@@ -36,7 +36,7 @@ export class JobDetailsComponent implements OnInit {
     coverLetter: '',
     yearsOfExperience: '',
     currentCompany: '',
-    resumeUrl: ''
+    resumeUrl: '',
   };
 
   constructor(
@@ -47,7 +47,7 @@ export class JobDetailsComponent implements OnInit {
     private authService: AuthService,
     private applicationService: ApplicationService,
     private matchService: MatchService,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -82,7 +82,7 @@ export class JobDetailsComponent implements OnInit {
         this.isLoading = false;
         console.error('Error fetching job details:', error);
         this.errorMessage = 'Failed to load job details. Please try again.';
-      }
+      },
     });
   }
 
@@ -91,7 +91,7 @@ export class JobDetailsComponent implements OnInit {
     const saved = localStorage.getItem('savedJobs');
     if (saved) {
       const savedJobs: Job[] = JSON.parse(saved);
-      this.isBookmarked = savedJobs.some(j => j.id === this.job!.id);
+      this.isBookmarked = savedJobs.some((j) => j.id === this.job!.id);
     }
   }
 
@@ -107,7 +107,7 @@ export class JobDetailsComponent implements OnInit {
 
     if (this.isBookmarked) {
       // Remove from saved jobs
-      savedJobs = savedJobs.filter(j => j.id !== this.job!.id);
+      savedJobs = savedJobs.filter((j) => j.id !== this.job!.id);
       this.isBookmarked = false;
     } else {
       // Add to saved jobs
@@ -137,7 +137,7 @@ export class JobDetailsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading profile:', error);
-        }
+        },
       });
     }
   }
@@ -155,7 +155,7 @@ export class JobDetailsComponent implements OnInit {
       coverLetter: '',
       yearsOfExperience: '',
       currentCompany: '',
-      resumeUrl: ''
+      resumeUrl: '',
     };
   }
 
@@ -163,7 +163,11 @@ export class JobDetailsComponent implements OnInit {
     if (!this.job) return;
 
     // Validate required fields
-    if (!this.applicationForm.fullName || !this.applicationForm.email || !this.applicationForm.phone) {
+    if (
+      !this.applicationForm.fullName ||
+      !this.applicationForm.email ||
+      !this.applicationForm.phone
+    ) {
       this.toastService.error('Please fill in all required fields');
       return;
     }
@@ -183,10 +187,12 @@ export class JobDetailsComponent implements OnInit {
       fullName: this.applicationForm.fullName,
       email: this.applicationForm.email,
       phone: this.applicationForm.phone,
-      yearsOfExperience: this.applicationForm.yearsOfExperience ? parseInt(this.applicationForm.yearsOfExperience) : 0,
+      yearsOfExperience: this.applicationForm.yearsOfExperience
+        ? parseInt(this.applicationForm.yearsOfExperience)
+        : 0,
       currentCompany: this.applicationForm.currentCompany || '',
       resumeUrl: this.applicationForm.resumeUrl || '',
-      coverLetter: this.applicationForm.coverLetter || ''
+      coverLetter: this.applicationForm.coverLetter || '',
     };
 
     this.applicationService.submitApplication(applicationRequest).subscribe({
@@ -197,17 +203,21 @@ export class JobDetailsComponent implements OnInit {
           this.closeApplicationForm();
         } else {
           // Handle error case (e.g., already applied)
-          this.toastService.error(response.message || 'Failed to submit application');
+          this.toastService.error(
+            response.message || 'Failed to submit application',
+          );
           this.closeApplicationForm();
         }
       },
       error: (error) => {
         this.isSubmittingApplication = false;
         console.error('Error submitting application:', error);
-        const errorMsg = error.error?.message || 'Failed to submit application. Please try again.';
+        const errorMsg =
+          error.error?.message ||
+          'Failed to submit application. Please try again.';
         this.toastService.error(errorMsg);
         this.closeApplicationForm();
-      }
+      },
     });
   }
 
@@ -223,22 +233,28 @@ export class JobDetailsComponent implements OnInit {
     this.isCheckingMatch = true;
     this.showMatchResult = false;
 
-    this.matchService.checkCompatibility(currentUser.id, this.job.id).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.matchResult = response.data;
-          this.showMatchResult = true;
-        } else {
-          this.toastService.error(response.message || 'Failed to check compatibility');
-        }
-        this.isCheckingMatch = false;
-      },
-      error: (error) => {
-        console.error('Error checking compatibility:', error);
-        this.toastService.error('Failed to check compatibility. Please try again.');
-        this.isCheckingMatch = false;
-      }
-    });
+    this.matchService
+      .checkCompatibility(currentUser.id, this.job.id)
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.matchResult = response.data;
+            this.showMatchResult = true;
+          } else {
+            this.toastService.error(
+              response.message || 'Failed to check compatibility',
+            );
+          }
+          this.isCheckingMatch = false;
+        },
+        error: (error) => {
+          console.error('Error checking compatibility:', error);
+          this.toastService.error(
+            'Failed to check compatibility. Please try again.',
+          );
+          this.isCheckingMatch = false;
+        },
+      });
   }
 
   getMatchColor(score: number): string {
@@ -261,14 +277,17 @@ export class JobDetailsComponent implements OnInit {
 
   getRequirementsArray(): string[] {
     if (!this.job?.requirements) return [];
-    return this.job.requirements.split(',').filter(r => r.trim()).map(r => r.trim());
+    return this.job.requirements
+      .split(',')
+      .filter((r) => r.trim())
+      .map((r) => r.trim());
   }
 
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: '2-digit',
-      day: '2-digit'
+      day: '2-digit',
     });
   }
 }

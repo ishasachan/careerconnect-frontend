@@ -1,4 +1,11 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -11,14 +18,14 @@ import Quill from 'quill';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './post-job.component.html',
-  styleUrl: './post-job.component.css'
+  styleUrl: './post-job.component.css',
 })
 export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('editor') editorElement!: ElementRef;
   @ViewChild('requirementsEditor') requirementsEditorElement!: ElementRef;
   private quill: Quill | null = null;
   private requirementsQuill: Quill | null = null;
-  
+
   editJobId: number | null = null;
   isEditMode = false;
   isLoadingJob = false;
@@ -31,7 +38,7 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
     type: 'FULL-TIME',
     description: '',
     requirements: '',
-    department: ''
+    department: '',
   };
 
   isPosting = false;
@@ -42,19 +49,19 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
   currencies = [
     { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
     { code: 'USD', symbol: '$', name: 'US Dollar' },
-    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' }
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
   ];
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private jobService: JobService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
     // Check if editing existing job
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params['id']) {
         this.editJobId = +params['id'];
         this.isEditMode = true;
@@ -70,11 +77,11 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoadingJob = false;
         if (response.success && response.data) {
           const jobData = response.data;
-          
+
           // Extract currency from salary
           let salaryValue = jobData.salary || '';
           let currency = 'USD';
-          
+
           if (salaryValue.startsWith('₹')) {
             currency = 'INR';
             salaryValue = salaryValue.substring(1);
@@ -85,7 +92,7 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
             currency = 'USD';
             salaryValue = salaryValue.substring(1);
           }
-          
+
           this.job = {
             title: jobData.title || '',
             company: jobData.company || '',
@@ -95,9 +102,9 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
             type: jobData.type || 'FULL-TIME',
             description: jobData.description || '',
             requirements: jobData.requirements || '',
-            department: jobData.department || ''
+            department: jobData.department || '',
           };
-          
+
           // Initialize Quill editors after data is loaded
           setTimeout(() => {
             this.initializeQuillEditors();
@@ -108,7 +115,7 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoadingJob = false;
         console.error('Error loading job:', error);
         this.errorMessage = 'Failed to load job data. Please try again.';
-      }
+      },
     });
   }
 
@@ -119,7 +126,7 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
       setTimeout(() => this.initializeQuillEditors(), 100);
       return;
     }
-    
+
     this.initializeQuillEditors();
   }
 
@@ -135,16 +142,17 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
         theme: 'snow',
         modules: {
           toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
+            [{ header: [1, 2, 3, false] }],
             ['bold', 'italic', 'underline', 'strike'],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'indent': '-1'}, { 'indent': '+1' }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            [{ indent: '-1' }, { indent: '+1' }],
             ['link', 'blockquote', 'code-block'],
-            [{ 'color': [] }, { 'background': [] }],
-            ['clean']
-          ]
+            [{ color: [] }, { background: [] }],
+            ['clean'],
+          ],
         },
-        placeholder: 'Describe the role, team, and what makes this opportunity great...'
+        placeholder:
+          'Describe the role, team, and what makes this opportunity great...',
       });
 
       // Set initial content if exists
@@ -160,18 +168,21 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Initialize Quill editor for requirements
     if (!this.requirementsQuill) {
-      this.requirementsQuill = new Quill(this.requirementsEditorElement.nativeElement, {
-        theme: 'snow',
-        modules: {
-          toolbar: [
-            ['bold', 'italic', 'underline'],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'code-block'],
-            ['clean']
-          ]
+      this.requirementsQuill = new Quill(
+        this.requirementsEditorElement.nativeElement,
+        {
+          theme: 'snow',
+          modules: {
+            toolbar: [
+              ['bold', 'italic', 'underline'],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              ['link', 'code-block'],
+              ['clean'],
+            ],
+          },
+          placeholder: 'List the requirements for this position...',
         },
-        placeholder: 'List the requirements for this position...'
-      });
+      );
 
       // Set initial content if exists
       if (this.job.requirements) {
@@ -202,7 +213,12 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // Validate required fields
-    if (!this.job.title || !this.job.company || !this.job.location || !this.job.salary) {
+    if (
+      !this.job.title ||
+      !this.job.company ||
+      !this.job.location ||
+      !this.job.salary
+    ) {
       this.errorMessage = 'Please fill in all required fields';
       return;
     }
@@ -211,40 +227,58 @@ export class PostJobComponent implements OnInit, AfterViewInit, OnDestroy {
     this.errorMessage = '';
     this.successMessage = '';
 
-    console.log(this.isEditMode ? 'Updating job' : 'Posting job for recruiter:', currentUser.id);
-    
+    console.log(
+      this.isEditMode ? 'Updating job' : 'Posting job for recruiter:',
+      currentUser.id,
+    );
+
     // Prepare job data with currency-formatted salary
-    const selectedCurrency = this.currencies.find(c => c.code === this.job.currency);
+    const selectedCurrency = this.currencies.find(
+      (c) => c.code === this.job.currency,
+    );
     const jobData = {
       ...this.job,
-      salary: `${selectedCurrency?.symbol}${this.job.salary}`
+      salary: `${selectedCurrency?.symbol}${this.job.salary}`,
     };
-    
+
     console.log('Job data:', jobData);
 
-    const apiCall = this.isEditMode && this.editJobId
-      ? this.jobService.updateJob(this.editJobId, jobData)
-      : this.jobService.postJob(currentUser.id, jobData);
+    const apiCall =
+      this.isEditMode && this.editJobId
+        ? this.jobService.updateJob(this.editJobId, jobData)
+        : this.jobService.postJob(currentUser.id, jobData);
 
     apiCall.subscribe({
       next: (response) => {
         this.isPosting = false;
-        console.log(this.isEditMode ? 'Job updated successfully:' : 'Job posted successfully:', response);
-        
+        console.log(
+          this.isEditMode
+            ? 'Job updated successfully:'
+            : 'Job posted successfully:',
+          response,
+        );
+
         if (response.success) {
-          this.successMessage = this.isEditMode ? 'Job updated successfully!' : 'Job posted successfully!';
+          this.successMessage = this.isEditMode
+            ? 'Job updated successfully!'
+            : 'Job posted successfully!';
           setTimeout(() => {
             this.router.navigate(['/dashboard/recruiter/listings']);
           }, 1500);
         } else {
-          this.errorMessage = response.message || (this.isEditMode ? 'Failed to update job' : 'Failed to post job');
+          this.errorMessage =
+            response.message ||
+            (this.isEditMode ? 'Failed to update job' : 'Failed to post job');
         }
       },
       error: (error) => {
         this.isPosting = false;
-        console.error(this.isEditMode ? 'Error updating job:' : 'Error posting job:', error);
+        console.error(
+          this.isEditMode ? 'Error updating job:' : 'Error posting job:',
+          error,
+        );
         this.errorMessage = `${this.isEditMode ? 'Failed to update job' : 'Failed to post job'}: ${error.error?.message || error.message || 'Please try again.'}`;
-      }
+      },
     });
   }
 

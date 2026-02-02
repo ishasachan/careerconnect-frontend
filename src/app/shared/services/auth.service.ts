@@ -2,10 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { LoginRequest, SignupRequest, AuthResponse, User } from '../models/auth.model';
+import {
+  LoginRequest,
+  SignupRequest,
+  AuthResponse,
+  User,
+} from '../models/auth.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private apiUrl = 'http://localhost:9090/api/auth';
@@ -13,18 +18,20 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(response => {
-        this.storeAuthData(response);
-      })
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/login`, credentials)
+      .pipe(
+        tap((response) => {
+          this.storeAuthData(response);
+        }),
+      );
   }
 
   signup(userData: SignupRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, userData).pipe(
-      tap(response => {
+      tap((response) => {
         this.storeAuthData(response);
-      })
+      }),
     );
   }
 
@@ -32,11 +39,11 @@ export class AuthService {
     if (response.token) {
       localStorage.setItem('token', response.token);
     }
-    
+
     const user: User = {
       id: response.userId,
       email: response.email,
-      role: response.role
+      role: response.role,
     };
     localStorage.setItem('user', JSON.stringify(user));
   }

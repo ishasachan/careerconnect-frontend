@@ -11,25 +11,25 @@ import { Application } from '../../../../shared/models/application.model';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './manage-applicants.component.html',
-  styleUrl: './manage-applicants.component.css'
+  styleUrl: './manage-applicants.component.css',
 })
 export class ManageApplicantsComponent implements OnInit {
   selectedJobFilter = 'all';
   applicants: Application[] = [];
   isLoading = false;
   errorMessage = '';
-  
+
   constructor(
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
     this.loadApplicants();
-    
+
     // Check if there's a jobId query param to filter by
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params['jobId']) {
         this.selectedJobFilter = params['jobId'];
       }
@@ -50,7 +50,7 @@ export class ManageApplicantsComponent implements OnInit {
       next: (response) => {
         this.isLoading = false;
         console.log('Applicants loaded successfully:', response);
-        
+
         if (response.success && response.data) {
           this.applicants = response.data;
         } else {
@@ -61,7 +61,7 @@ export class ManageApplicantsComponent implements OnInit {
         this.isLoading = false;
         console.error('Error loading applicants:', error);
         this.errorMessage = 'Failed to load applicants. Please try again.';
-      }
+      },
     });
   }
 
@@ -69,12 +69,14 @@ export class ManageApplicantsComponent implements OnInit {
     if (this.selectedJobFilter === 'all') {
       return this.applicants;
     }
-    return this.applicants.filter(a => a.job.id === parseInt(this.selectedJobFilter));
+    return this.applicants.filter(
+      (a) => a.job.id === parseInt(this.selectedJobFilter),
+    );
   }
 
   get uniqueJobs() {
     const jobMap = new Map();
-    this.applicants.forEach(app => {
+    this.applicants.forEach((app) => {
       if (!jobMap.has(app.job.id)) {
         jobMap.set(app.job.id, { id: app.job.id, title: app.job.title });
       }
@@ -84,22 +86,22 @@ export class ManageApplicantsComponent implements OnInit {
 
   getStatusClass(status: string): string {
     const statusClasses: { [key: string]: string } = {
-      'APPLIED': 'bg-blue-100 text-blue-700',
-      'UNDER_REVIEW': 'bg-yellow-100 text-yellow-700',
-      'SHORTLISTED': 'bg-purple-100 text-purple-700',
-      'INTERVIEW': 'bg-indigo-100 text-indigo-700',
-      'HIRED': 'bg-green-100 text-green-700',
-      'REJECTED': 'bg-red-100 text-red-700'
+      APPLIED: 'bg-blue-100 text-blue-700',
+      UNDER_REVIEW: 'bg-yellow-100 text-yellow-700',
+      SHORTLISTED: 'bg-purple-100 text-purple-700',
+      INTERVIEW: 'bg-indigo-100 text-indigo-700',
+      HIRED: 'bg-green-100 text-green-700',
+      REJECTED: 'bg-red-100 text-red-700',
     };
     return statusClasses[status] || 'bg-gray-100 text-gray-700';
   }
 
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
     }).format(date);
   }
 
@@ -109,21 +111,25 @@ export class ManageApplicantsComponent implements OnInit {
   }
 
   updateStatus(applicant: Application, newStatus: string): void {
-    if (confirm(`Are you sure you want to change the status to ${newStatus}?`)) {
-      this.applicationService.updateApplicationStatus(applicant.id, newStatus).subscribe({
-        next: (response) => {
-          if (response.success) {
-            console.log('Status updated successfully:', response);
-            applicant.status = newStatus as any;
-          } else {
-            alert('Failed to update status: ' + response.message);
-          }
-        },
-        error: (error) => {
-          console.error('Error updating status:', error);
-          alert('Failed to update status. Please try again.');
-        }
-      });
+    if (
+      confirm(`Are you sure you want to change the status to ${newStatus}?`)
+    ) {
+      this.applicationService
+        .updateApplicationStatus(applicant.id, newStatus)
+        .subscribe({
+          next: (response) => {
+            if (response.success) {
+              console.log('Status updated successfully:', response);
+              applicant.status = newStatus as any;
+            } else {
+              alert('Failed to update status: ' + response.message);
+            }
+          },
+          error: (error) => {
+            console.error('Error updating status:', error);
+            alert('Failed to update status. Please try again.');
+          },
+        });
     }
   }
 
@@ -141,28 +147,32 @@ export class ManageApplicantsComponent implements OnInit {
         error: (error) => {
           console.error('Error resetting status:', error);
           alert('Failed to reset status. Please try again.');
-        }
+        },
       });
     }
   }
 
   getInitials(name: string): string {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
   }
 
   get newApplicantsCount(): number {
-    return this.applicants.filter(a => a.status === 'APPLIED').length;
+    return this.applicants.filter((a) => a.status === 'APPLIED').length;
   }
 
   get shortlistedCount(): number {
-    return this.applicants.filter(a => a.status === 'SHORTLISTED').length;
+    return this.applicants.filter((a) => a.status === 'SHORTLISTED').length;
   }
 
   get interviewedCount(): number {
-    return this.applicants.filter(a => a.status === 'INTERVIEW').length;
+    return this.applicants.filter((a) => a.status === 'INTERVIEW').length;
   }
 
   get hiredCount(): number {
-    return this.applicants.filter(a => a.status === 'HIRED').length;
+    return this.applicants.filter((a) => a.status === 'HIRED').length;
   }
 }

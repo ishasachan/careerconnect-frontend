@@ -9,7 +9,8 @@
 
   <div *ngIf="!isLoading">
     <!-- Profile Completion Alert -->
-    <div *ngIf="showProfileAlert" class="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6 shadow-sm">
+    <div *ngIf="showProfileAlert"
+      class="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6 shadow-sm">
       <div class="flex items-start gap-4">
         <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
           <i class="fa-solid fa-user-pen text-amber-600 text-xl"></i>
@@ -22,15 +23,16 @@
             </button>
           </div>
           <p class="text-sm text-slate-600 mb-3">
-            Your profile is {{ profileCompletionPercentage }}% complete. A complete profile helps you attract better candidates and builds trust with job seekers.
+            Your profile is {{ profileCompletionPercentage }}% complete. A complete profile helps you attract better
+            candidates and builds trust with job seekers.
           </p>
           <div class="flex items-center gap-4">
             <div class="flex-1 bg-white rounded-full h-2 overflow-hidden">
-              <div class="bg-gradient-to-r from-amber-500 to-orange-500 h-full transition-all duration-500" 
-                   [style.width.%]="profileCompletionPercentage"></div>
+              <div class="bg-gradient-to-r from-amber-500 to-orange-500 h-full transition-all duration-500"
+                [style.width.%]="profileCompletionPercentage"></div>
             </div>
-            <button (click)="completeProfile()" 
-                    class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all font-medium text-sm">
+            <button (click)="completeProfile()"
+              class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all font-medium text-sm">
               Complete Now
             </button>
           </div>
@@ -101,24 +103,13 @@
             <p class="text-sm text-slate-500 mt-1">Distribution of applications across your job postings</p>
           </div>
         </div>
-        
+
         <!-- Chart -->
         <div style="height: 350px;" *ngIf="applicationVolumeData.length > 0">
-          <ngx-charts-bar-vertical
-            [results]="applicationVolumeData"
-            [xAxis]="showXAxis"
-            [yAxis]="showYAxis"
-            [legend]="showLegend"
-            [showXAxisLabel]="showXAxisLabel"
-            [showYAxisLabel]="showYAxisLabel"
-            [xAxisLabel]="xAxisLabel"
-            [yAxisLabel]="yAxisLabel"
-            [gradient]="gradient"
-            [showGridLines]="showGridLines"
-            [roundDomains]="roundDomains"
-            [scheme]="colorScheme"
-            [barPadding]="20"
-            [animations]="true">
+          <ngx-charts-bar-vertical [results]="applicationVolumeData" [xAxis]="showXAxis" [yAxis]="showYAxis"
+            [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel"
+            [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" [gradient]="gradient" [showGridLines]="showGridLines"
+            [roundDomains]="roundDomains" [scheme]="colorScheme" [barPadding]="20" [animations]="true">
           </ngx-charts-bar-vertical>
         </div>
         <div *ngIf="applicationVolumeData.length === 0" class="h-80 flex items-center justify-center">
@@ -140,13 +131,11 @@
 
         <!-- Job List -->
         <div class="space-y-3" *ngIf="topPerformingJobs.length > 0">
-          <div *ngFor="let job of topPerformingJobs" 
-               (click)="viewJob(job.id)"
-               class="p-4 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors border border-slate-100">
+          <div *ngFor="let job of topPerformingJobs" (click)="viewJob(job.id)"
+            class="p-4 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors border border-slate-100">
             <div class="flex items-start justify-between mb-2">
               <h3 class="font-semibold text-slate-800 text-sm flex-1 pr-2">{{ job.title }}</h3>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                    [ngClass]="{
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
                       'bg-green-100 text-green-800': job.status === 'ACTIVE',
                       'bg-yellow-100 text-yellow-800': job.status === 'PAUSED',
                       'bg-red-100 text-red-800': job.status === 'CLOSED'
@@ -164,12 +153,11 @@
             </div>
           </div>
         </div>
-        
+
         <div *ngIf="topPerformingJobs.length === 0" class="text-center py-8">
           <i class="fa-solid fa-briefcase text-slate-300 text-4xl mb-3"></i>
           <p class="text-sm text-slate-500">No jobs posted yet</p>
-          <button (click)="viewAllListings()" 
-                  class="mt-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+          <button (click)="viewAllListings()" class="mt-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium">
             Post Your First Job
           </button>
         </div>
@@ -190,22 +178,21 @@
 
       <!-- Applications List -->
       <div class="space-y-3" *ngIf="recentApplications.length > 0">
-        <div *ngFor="let app of recentApplications" 
-             (click)="viewApplicant(app.id)"
-             class="flex items-center gap-4 p-4 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors border border-slate-100">
+        <div *ngFor="let app of recentApplications" (click)="viewApplicant(app.id)"
+          class="flex items-center gap-4 p-4 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors border border-slate-100">
           <!-- Avatar -->
           <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
             <span class="text-base font-bold text-indigo-600">
               {{ getInitials(app.fullName) }}
             </span>
           </div>
-          
+
           <!-- Info -->
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 mb-1">
               <h3 class="font-semibold text-slate-800 text-sm truncate">{{ app.fullName }}</h3>
-              <span [class]="getStatusColor(app.status)" 
-                    class="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
+              <span [class]="getStatusColor(app.status)"
+                class="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
                 {{ app.status.replace('_', ' ') }}
               </span>
             </div>
@@ -213,7 +200,7 @@
               Applied for <span class="text-indigo-600 font-medium">{{ app.job.title }}</span>
             </p>
           </div>
-          
+
           <!-- Meta -->
           <div class="text-right">
             <p class="text-xs text-slate-500">{{ formatDate(app.appliedDate) }}</p>

@@ -1,6 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
 
@@ -9,7 +14,7 @@ import { AuthService } from '../../../shared/services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './signup.component.html',
-  styleUrl: './signup.component.css'
+  styleUrl: './signup.component.css',
 })
 export class SignupComponent {
   selectedRole: 'SEEKER' | 'RECRUITER' = 'SEEKER';
@@ -23,13 +28,13 @@ export class SignupComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      role: ['SEEKER']
+      role: ['SEEKER'],
     });
   }
 
@@ -43,12 +48,12 @@ export class SignupComponent {
     if (this.registerForm.valid) {
       this.isLoading = true;
       this.errorMessage = '';
-      
+
       this.authService.signup(this.registerForm.value).subscribe({
         next: (response) => {
           this.isLoading = false;
           console.log('Signup successful:', response);
-          
+
           // Navigate based on user role
           const role = this.registerForm.value.role.toLowerCase();
           this.router.navigate([`/dashboard/${role}`]);
@@ -56,8 +61,9 @@ export class SignupComponent {
         error: (error) => {
           this.isLoading = false;
           console.error('Signup error:', error);
-          this.errorMessage = error.error?.message || 'Signup failed. Please try again.';
-        }
+          this.errorMessage =
+            error.error?.message || 'Signup failed. Please try again.';
+        },
       });
     } else {
       this.markFormGroupTouched(this.registerForm);
@@ -65,7 +71,7 @@ export class SignupComponent {
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       formGroup.get(key)?.markAsTouched();
     });
   }

@@ -1,264 +1,231 @@
 <div class="p-8">
-  <!-- Success/Error Messages -->
-  <div *ngIf="successMessage" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-    <p class="text-sm text-green-600 flex items-center gap-2">
-      <i class="fas fa-check-circle"></i>
-      {{ successMessage }}
-    </p>
-  </div>
-  <div *ngIf="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-    <p class="text-sm text-red-600 flex items-center gap-2">
-      <i class="fas fa-exclamation-circle"></i>
-      {{ errorMessage }}
-    </p>
-  </div>
-
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="flex items-center justify-center py-20">
-    <div class="text-center">
-      <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
-      <p class="text-slate-600">Loading profile...</p>
+    <!-- Success/Error Messages -->
+    <div *ngIf="successMessage" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+        <p class="text-sm text-green-600 flex items-center gap-2">
+            <i class="fas fa-check-circle"></i>
+            {{ successMessage }}
+        </p>
     </div>
-  </div>
-
-  <div *ngIf="!isLoading">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-3xl font-bold text-slate-800">My Profile</h1>
-        <p class="text-slate-500 mt-1">Manage your recruiter profile and company information</p>
-      </div>
-      <button 
-        *ngIf="!isEditing"
-        (click)="toggleEdit()"
-        class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-        <i class="fa-solid fa-pen mr-2"></i>Edit Profile
-      </button>
-      <div *ngIf="isEditing" class="flex gap-3">
-        <button 
-          (click)="toggleEdit()"
-          [disabled]="isSaving"
-          class="px-6 py-2.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors font-medium disabled:opacity-50">
-          Cancel
-        </button>
-        <button 
-          (click)="saveProfile()"
-          [disabled]="isSaving"
-          class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50 flex items-center gap-2">
-          <i *ngIf="!isSaving" class="fa-solid fa-check"></i>
-          <i *ngIf="isSaving" class="fas fa-spinner fa-spin"></i>
-          <span>{{ isSaving ? 'Saving...' : 'Save Changes' }}</span>
-        </button>
-      </div>
+    <div *ngIf="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p class="text-sm text-red-600 flex items-center gap-2">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ errorMessage }}
+        </p>
     </div>
 
-  <!-- Profile Content -->
-  <div class="grid grid-cols-3 gap-6">
-    <!-- Left Column - Profile Card & Company Info -->
-    <div class="space-y-6">
-      <!-- Profile Card -->
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="text-center mb-6">
-          <div class="relative inline-block">
-            <div class="w-32 h-32 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden mx-auto mb-4">
-              <i *ngIf="!recruiter.avatarUrl && !isUploadingAvatar" class="fa-solid fa-user text-slate-400 text-5xl"></i>
-              <i *ngIf="isUploadingAvatar" class="fas fa-spinner fa-spin text-indigo-600 text-4xl"></i>
-              <img *ngIf="recruiter.avatarUrl && !isUploadingAvatar" [src]="recruiter.avatarUrl" alt="Avatar" class="w-full h-full object-cover">
-            </div>
-            <label *ngIf="isEditing" class="absolute bottom-2 right-2 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors">
-              <i class="fa-solid fa-camera text-white"></i>
-              <input type="file" class="hidden" accept="image/*" (change)="handleAvatarUpload($event)" [disabled]="isUploadingAvatar">
-            </label>
-          </div>
-          <h2 class="text-xl font-bold text-slate-800 mb-1">{{ recruiter.name }}</h2>
-          <p class="text-indigo-600 font-medium mb-4">{{ recruiter.position }}</p>
-          <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
-            <i class="fa-solid fa-building"></i>
-            <span>{{ company.name }}</span>
-          </div>
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+        <div class="text-center">
+            <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+            <p class="text-slate-600">Loading profile...</p>
         </div>
-
-        <div class="space-y-3 pt-4 border-t border-slate-200">
-          <div class="flex items-center gap-3 text-sm">
-            <i class="fa-solid fa-envelope text-slate-400 w-5"></i>
-            <span class="text-slate-600">{{ recruiter.email }}</span>
-          </div>
-          <div class="flex items-center gap-3 text-sm">
-            <i class="fa-solid fa-phone text-slate-400 w-5"></i>
-            <span class="text-slate-600">{{ recruiter.phone }}</span>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- Right Column - Detailed Information -->
-    <div class="col-span-2 space-y-6">
-      <!-- Company Information -->
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <h3 class="text-lg font-bold text-slate-800 mb-6">Company Information</h3>
-        
-        <div class="grid grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
-            <input 
-              type="text" 
-              [(ngModel)]="company.name"
-              [disabled]="!isEditing"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Industry</label>
-            <input 
-              type="text" 
-              [(ngModel)]="company.industry"
-              [disabled]="!isEditing"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Company Size</label>
-            <select 
-              [(ngModel)]="company.size"
-              [disabled]="!isEditing"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
-              <option value="1-50">1-50 employees</option>
-              <option value="51-200">51-200 employees</option>
-              <option value="201-1000">201-1000 employees</option>
-              <option value="1000-5000">1000-5000 employees</option>
-              <option value="5000+">5000+ employees</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Website</label>
-            <input 
-              type="url" 
-              [(ngModel)]="company.website"
-              [disabled]="!isEditing"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
-          </div>
-
-          <div class="col-span-2">
-            <label class="block text-sm font-medium text-slate-700 mb-2">Location</label>
-            <input 
-              type="text" 
-              [(ngModel)]="company.location"
-              [disabled]="!isEditing"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
-          </div>
-
-          <div class="col-span-2">
-            <label class="block text-sm font-medium text-slate-700 mb-2">Company Description</label>
-            <textarea 
-              [(ngModel)]="company.description"
-              [disabled]="!isEditing"
-              rows="4"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600 resize-none"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- Personal Information -->
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <h3 class="text-lg font-bold text-slate-800 mb-6">Personal Information</h3>
-        
-        <div class="grid grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
-            <input 
-              type="text" 
-              [(ngModel)]="recruiter.name"
-              [disabled]="!isEditing"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Position</label>
-            <input 
-              type="text" 
-              [(ngModel)]="recruiter.position"
-              [disabled]="!isEditing"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
-            <input 
-              type="email" 
-              [(ngModel)]="recruiter.email"
-              [disabled]="!isEditing"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Phone</label>
-            <input 
-              type="tel" 
-              [(ngModel)]="recruiter.phone"
-              [disabled]="!isEditing"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
-          </div>
-        </div>
-      </div>
-
-      <!-- Hiring Preferences -->
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <h3 class="text-lg font-bold text-slate-800 mb-6">Hiring Preferences</h3>
-        
-        <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-3">Roles You're Hiring For</label>
-            <div class="flex flex-wrap gap-2">
-              <button 
-                *ngFor="let role of hiringPreferences.roles"
-                (click)="isEditing && toggleSelection(selectedRoles, role)"
-                [disabled]="!isEditing"
-                [class.bg-indigo-600]="isSelected(selectedRoles, role)"
-                [class.text-white]="isSelected(selectedRoles, role)"
-                [class.bg-slate-100]="!isSelected(selectedRoles, role)"
-                [class.text-slate-700]="!isSelected(selectedRoles, role)"
-                class="px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                {{ role }}
-              </button>
+    <div *ngIf="!isLoading">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800">My Profile</h1>
+                <p class="text-slate-500 mt-1">Manage your recruiter profile and company information</p>
             </div>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-3">Experience Levels</label>
-            <div class="flex flex-wrap gap-2">
-              <button 
-                *ngFor="let level of hiringPreferences.experienceLevels"
-                (click)="isEditing && toggleSelection(selectedExperience, level)"
-                [disabled]="!isEditing"
-                [class.bg-indigo-600]="isSelected(selectedExperience, level)"
-                [class.text-white]="isSelected(selectedExperience, level)"
-                [class.bg-slate-100]="!isSelected(selectedExperience, level)"
-                [class.text-slate-700]="!isSelected(selectedExperience, level)"
-                class="px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                {{ level }}
-              </button>
+            <button *ngIf="!isEditing" (click)="toggleEdit()"
+                class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                <i class="fa-solid fa-pen mr-2"></i>Edit Profile
+            </button>
+            <div *ngIf="isEditing" class="flex gap-3">
+                <button (click)="toggleEdit()" [disabled]="isSaving"
+                    class="px-6 py-2.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors font-medium disabled:opacity-50">
+                    Cancel
+                </button>
+                <button (click)="saveProfile()" [disabled]="isSaving"
+                    class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50 flex items-center gap-2">
+                    <i *ngIf="!isSaving" class="fa-solid fa-check"></i>
+                    <i *ngIf="isSaving" class="fas fa-spinner fa-spin"></i>
+                    <span>{{ isSaving ? 'Saving...' : 'Save Changes' }}</span>
+                </button>
             </div>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-3">Work Locations</label>
-            <div class="flex flex-wrap gap-2">
-              <button 
-                *ngFor="let location of hiringPreferences.locations"
-                (click)="isEditing && toggleSelection(selectedLocations, location)"
-                [disabled]="!isEditing"
-                [class.bg-indigo-600]="isSelected(selectedLocations, location)"
-                [class.text-white]="isSelected(selectedLocations, location)"
-                [class.bg-slate-100]="!isSelected(selectedLocations, location)"
-                [class.text-slate-700]="!isSelected(selectedLocations, location)"
-                class="px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                {{ location }}
-              </button>
-            </div>
-          </div>
         </div>
-      </div>
+
+        <!-- Profile Content -->
+        <div class="grid grid-cols-3 gap-6">
+            <!-- Left Column - Profile Card & Company Info -->
+            <div class="space-y-6">
+                <!-- Profile Card -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="text-center mb-6">
+                        <div class="relative inline-block">
+                            <div
+                                class="w-32 h-32 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden mx-auto mb-4">
+                                <i *ngIf="!recruiter.avatarUrl && !isUploadingAvatar"
+                                    class="fa-solid fa-user text-slate-400 text-5xl"></i>
+                                <i *ngIf="isUploadingAvatar"
+                                    class="fas fa-spinner fa-spin text-indigo-600 text-4xl"></i>
+                                <img *ngIf="recruiter.avatarUrl && !isUploadingAvatar" [src]="recruiter.avatarUrl"
+                                    alt="Avatar" class="w-full h-full object-cover">
+                            </div>
+                            <label *ngIf="isEditing"
+                                class="absolute bottom-2 right-2 w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors">
+                                <i class="fa-solid fa-camera text-white"></i>
+                                <input type="file" class="hidden" accept="image/*" (change)="handleAvatarUpload($event)"
+                                    [disabled]="isUploadingAvatar">
+                            </label>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-800 mb-1">{{ recruiter.name }}</h2>
+                        <p class="text-indigo-600 font-medium mb-4">{{ recruiter.position }}</p>
+                        <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                            <i class="fa-solid fa-building"></i>
+                            <span>{{ company.name }}</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 pt-4 border-t border-slate-200">
+                        <div class="flex items-center gap-3 text-sm">
+                            <i class="fa-solid fa-envelope text-slate-400 w-5"></i>
+                            <span class="text-slate-600">{{ recruiter.email }}</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm">
+                            <i class="fa-solid fa-phone text-slate-400 w-5"></i>
+                            <span class="text-slate-600">{{ recruiter.phone }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Detailed Information -->
+            <div class="col-span-2 space-y-6">
+                <!-- Company Information -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">Company Information</h3>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
+                            <input type="text" [(ngModel)]="company.name" [disabled]="!isEditing"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Industry</label>
+                            <input type="text" [(ngModel)]="company.industry" [disabled]="!isEditing"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Company Size</label>
+                            <select [(ngModel)]="company.size" [disabled]="!isEditing"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
+                                <option value="1-50">1-50 employees</option>
+                                <option value="51-200">51-200 employees</option>
+                                <option value="201-1000">201-1000 employees</option>
+                                <option value="1000-5000">1000-5000 employees</option>
+                                <option value="5000+">5000+ employees</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Website</label>
+                            <input type="url" [(ngModel)]="company.website" [disabled]="!isEditing"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
+                        </div>
+
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Location</label>
+                            <input type="text" [(ngModel)]="company.location" [disabled]="!isEditing"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
+                        </div>
+
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Company Description</label>
+                            <textarea [(ngModel)]="company.description" [disabled]="!isEditing" rows="4"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600 resize-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">Personal Information</h3>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+                            <input type="text" [(ngModel)]="recruiter.name" [disabled]="!isEditing"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Position</label>
+                            <input type="text" [(ngModel)]="recruiter.position" [disabled]="!isEditing"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                            <input type="email" [(ngModel)]="recruiter.email" [disabled]="!isEditing"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Phone</label>
+                            <input type="tel" [(ngModel)]="recruiter.phone" [disabled]="!isEditing"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-600">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hiring Preferences -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">Hiring Preferences</h3>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-3">Roles You're Hiring For</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button *ngFor="let role of hiringPreferences.roles"
+                                    (click)="isEditing && toggleSelection(selectedRoles, role)" [disabled]="!isEditing"
+                                    [class.bg-indigo-600]="isSelected(selectedRoles, role)"
+                                    [class.text-white]="isSelected(selectedRoles, role)"
+                                    [class.bg-slate-100]="!isSelected(selectedRoles, role)"
+                                    [class.text-slate-700]="!isSelected(selectedRoles, role)"
+                                    class="px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {{ role }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-3">Experience Levels</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button *ngFor="let level of hiringPreferences.experienceLevels"
+                                    (click)="isEditing && toggleSelection(selectedExperience, level)"
+                                    [disabled]="!isEditing"
+                                    [class.bg-indigo-600]="isSelected(selectedExperience, level)"
+                                    [class.text-white]="isSelected(selectedExperience, level)"
+                                    [class.bg-slate-100]="!isSelected(selectedExperience, level)"
+                                    [class.text-slate-700]="!isSelected(selectedExperience, level)"
+                                    class="px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {{ level }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-3">Work Locations</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button *ngFor="let location of hiringPreferences.locations"
+                                    (click)="isEditing && toggleSelection(selectedLocations, location)"
+                                    [disabled]="!isEditing"
+                                    [class.bg-indigo-600]="isSelected(selectedLocations, location)"
+                                    [class.text-white]="isSelected(selectedLocations, location)"
+                                    [class.bg-slate-100]="!isSelected(selectedLocations, location)"
+                                    [class.text-slate-700]="!isSelected(selectedLocations, location)"
+                                    class="px-4 py-2 rounded-lg font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {{ location }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>

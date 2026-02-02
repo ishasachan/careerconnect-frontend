@@ -13,7 +13,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './seeker-profile.component.html',
-  styleUrl: './seeker-profile.component.css'
+  styleUrl: './seeker-profile.component.css',
 })
 export class SeekerProfileComponent implements OnInit {
   user = {
@@ -21,7 +21,7 @@ export class SeekerProfileComponent implements OnInit {
     name: '',
     email: '',
     role: 'SEEKER',
-    avatar: ''
+    avatar: '',
   };
 
   profileId: number = 0;
@@ -45,7 +45,7 @@ export class SeekerProfileComponent implements OnInit {
     private profileService: ProfileService,
     private authService: AuthService,
     private uploadService: UploadService,
-    private toastService: ToastService
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -60,7 +60,7 @@ export class SeekerProfileComponent implements OnInit {
         name: '',
         email: currentUser.email,
         role: currentUser.role,
-        avatar: ''
+        avatar: '',
       };
 
       this.profileService.getProfile(currentUser.id).subscribe({
@@ -73,7 +73,7 @@ export class SeekerProfileComponent implements OnInit {
             this.skills = response.data.skills || '';
             this.resumeUrl = response.data.resumeUrl || '';
             this.avatarUrl = response.data.avatarUrl || '';
-            
+
             // Parse AI feedback if exists
             if (response.data.aiFeedback) {
               try {
@@ -88,7 +88,7 @@ export class SeekerProfileComponent implements OnInit {
           this.isLoading = false;
           console.error('Error loading profile:', error);
           this.errorMessage = 'Failed to load profile. Please try again.';
-        }
+        },
       });
     } else {
       this.isLoading = false;
@@ -100,17 +100,17 @@ export class SeekerProfileComponent implements OnInit {
     event.preventDefault();
     this.isSaving = true;
     this.errorMessage = '';
-    
+
     // Remove duplicate skills before saving
     const uniqueSkills = this.getSkillsArray().join(', ');
-    
+
     const profileData = {
       userId: this.user.id,
       bio: this.bio,
       skills: uniqueSkills,
       resumeUrl: this.resumeUrl,
       avatarUrl: this.avatarUrl,
-      aiFeedback: this.aiFeedback ? JSON.stringify(this.aiFeedback) : ''
+      aiFeedback: this.aiFeedback ? JSON.stringify(this.aiFeedback) : '',
     };
 
     this.profileService.saveProfile(profileData).subscribe({
@@ -125,23 +125,25 @@ export class SeekerProfileComponent implements OnInit {
       error: (error) => {
         this.isSaving = false;
         console.error('Error saving profile:', error);
-        this.errorMessage = error.error?.message || 'Failed to save profile. Please try again.';
-      }
+        this.errorMessage =
+          error.error?.message || 'Failed to save profile. Please try again.';
+      },
     });
   }
 
   runAiReview() {
     this.isAnalyzing = true;
-    
+
     // Simulate AI analysis
     setTimeout(() => {
       this.aiFeedback = {
         strengths: [
           'Strong full-stack development background',
           'Excellent problem-solving abilities',
-          'Experience with modern frameworks'
+          'Experience with modern frameworks',
         ],
-        marketFit: 'Your profile aligns well with senior developer positions in tech companies. Consider highlighting your leadership experience.'
+        marketFit:
+          'Your profile aligns well with senior developer positions in tech companies. Consider highlighting your leadership experience.',
       };
       this.isAnalyzing = false;
     }, 2000);
@@ -152,20 +154,27 @@ export class SeekerProfileComponent implements OnInit {
   }
 
   getSkillsArray(): string[] {
-    const skillsArray = this.skills.split(',')
-      .filter(s => s.trim())
-      .map(s => s.trim());
-    
+    const skillsArray = this.skills
+      .split(',')
+      .filter((s) => s.trim())
+      .map((s) => s.trim());
+
     // Remove duplicates (case-insensitive)
-    const uniqueSkills = skillsArray.filter((skill, index, self) => 
-      index === self.findIndex(s => s.toLowerCase() === skill.toLowerCase())
+    const uniqueSkills = skillsArray.filter(
+      (skill, index, self) =>
+        index ===
+        self.findIndex((s) => s.toLowerCase() === skill.toLowerCase()),
     );
-    
+
     return uniqueSkills;
   }
 
   getAvatarUrl(): string {
-    return this.avatarUrl || this.user.avatar || `https://picsum.photos/seed/${this.user.id}/400/400`;
+    return (
+      this.avatarUrl ||
+      this.user.avatar ||
+      `https://picsum.photos/seed/${this.user.id}/400/400`
+    );
   }
 
   // File upload handlers
@@ -173,7 +182,7 @@ export class SeekerProfileComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      
+
       // Validate file type
       if (file.type !== 'application/pdf') {
         this.uploadErrorMessage = 'Please select a PDF file for resume.';
@@ -196,7 +205,7 @@ export class SeekerProfileComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      
+
       // Validate file type
       if (!file.type.startsWith('image/')) {
         this.uploadErrorMessage = 'Please select an image file for avatar.';
@@ -233,7 +242,7 @@ export class SeekerProfileComponent implements OnInit {
         this.isUploadingResume = false;
         console.error('Error uploading resume:', error);
         this.uploadErrorMessage = 'Failed to upload resume. Please try again.';
-      }
+      },
     });
   }
 
@@ -256,23 +265,27 @@ export class SeekerProfileComponent implements OnInit {
         this.isUploadingAvatar = false;
         console.error('Error uploading avatar:', error);
         this.uploadErrorMessage = 'Failed to upload avatar. Please try again.';
-      }
+      },
     });
   }
 
   triggerResumeUpload() {
-    const fileInput = document.getElementById('resumeFileInput') as HTMLInputElement;
+    const fileInput = document.getElementById(
+      'resumeFileInput',
+    ) as HTMLInputElement;
     fileInput?.click();
   }
 
   triggerAvatarUpload() {
-    const fileInput = document.getElementById('avatarFileInput') as HTMLInputElement;
+    const fileInput = document.getElementById(
+      'avatarFileInput',
+    ) as HTMLInputElement;
     fileInput?.click();
   }
 
   getResumeFileName(): string {
     if (!this.resumeUrl) return '';
-    
+
     try {
       // Extract filename from URL
       const url = new URL(this.resumeUrl);

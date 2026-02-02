@@ -1,9 +1,10 @@
 <div class="flex items-center gap-3 mb-6">
-  <div *ngIf="icon" class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg bg-gradient-to-br from-{{gradientFrom}} to-{{gradientTo}}">
-    <i [class]="icon + ' text-white text-xl'"></i>
-  </div>
-  <div>
-    <h2 class="text-xl font-bold text-slate-800">{{ title }}</h2>
-    <p *ngIf="subtitle" class="text-xs text-slate-500">{{ subtitle }}</p>
-  </div>
+    <div *ngIf="icon"
+        class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg bg-gradient-to-br from-{{gradientFrom}} to-{{gradientTo}}">
+        <i [class]="icon + ' text-white text-xl'"></i>
+    </div>
+    <div>
+        <h2 class="text-xl font-bold text-slate-800">{{ title }}</h2>
+        <p *ngIf="subtitle" class="text-xs text-slate-500">{{ subtitle }}</p>
+    </div>
 </div>

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { UploadResponse } from '../models/upload.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UploadService {
   private apiUrl = 'http://localhost:9090/api/upload';

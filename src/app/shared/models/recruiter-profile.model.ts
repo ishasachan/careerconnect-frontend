@@ -7,7 +7,6 @@ export interface RecruiterInfo {
   position: string;
   avatarUrl: string;
 }
-
 export interface CompanyInfo {
   id?: number;
   recruiterId?: number;
@@ -18,7 +17,6 @@ export interface CompanyInfo {
   location: string;
   description: string;
 }
-
 export interface HiringPreferences {
   id?: number;
   recruiterId?: number;
