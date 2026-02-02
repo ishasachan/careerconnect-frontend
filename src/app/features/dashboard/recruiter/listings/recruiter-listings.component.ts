@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
+import { JobService } from '../../../../shared/services/job.service';
+import { AuthService } from '../../../../shared/services/auth.service';
+import { Job } from '../../../../shared/models/job.model';
 
 @Component({
   selector: 'app-recruiter-listings',
@@ -10,43 +13,50 @@ import { StatCardComponent } from '../../../../shared/components/stat-card/stat-
   templateUrl: './recruiter-listings.component.html',
   styleUrl: './recruiter-listings.component.css'
 })
-export class RecruiterListingsComponent {
-  listings = [
-    {
-      id: 1,
-      title: 'Senior Frontend Engineer',
-      location: 'Remote',
-      status: 'ACTIVE',
-      applicants: 12,
-      postedDate: new Date('2026-01-15'),
-      type: 'Full-time',
-      salary: '$120k - $160k'
-    },
-    {
-      id: 2,
-      title: 'Product Designer',
-      location: 'New York, NY',
-      status: 'ACTIVE',
-      applicants: 8,
-      postedDate: new Date('2026-01-18'),
-      type: 'Full-time',
-      salary: '$90k - $130k'
-    },
-    {
-      id: 3,
-      title: 'Backend Developer (Node.js)',
-      location: 'Berlin, DE',
-      status: 'ACTIVE',
-      applicants: 4,
-      postedDate: new Date('2026-01-22'),
-      type: 'Contract',
-      salary: '$110k - $150k'
-    }
-  ];
-
+export class RecruiterListingsComponent implements OnInit {
+  listings: Job[] = [];
+  isLoading = false;
+  errorMessage = '';
   openDropdownId: number | null = null;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private jobService: JobService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit() {
+    this.loadJobs();
+  }
+
+  loadJobs() {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      this.errorMessage = 'User not authenticated';
+      return;
+    }
+
+    this.isLoading = true;
+    console.log('Loading jobs for recruiter:', currentUser.id);
+
+    this.jobService.getRecruiterJobs(currentUser.id).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Jobs loaded successfully:', response);
+        
+        if (response.success && response.data) {
+          this.listings = response.data;
+        } else {
+          this.errorMessage = response.message || 'Failed to load jobs';
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error loading jobs:', error);
+        this.errorMessage = 'Failed to load jobs. Please try again.';
+      }
+    });
+  }
 
   getStatusClass(status: string): string {
     const statusClasses: { [key: string]: string } = {
@@ -84,24 +94,152 @@ export class RecruiterListingsComponent {
   }
 
   pauseJob(jobId: number): void {
-    console.log('Pausing job:', jobId);
+    if (confirm('Are you sure you want to pause this job posting?')) {
+      this.jobService.pauseJob(jobId).subscribe({
+        next: (response) => {
+          if (response.success) {
+            console.log('Job paused successfully:', response);
+            // Reload jobs to get updated status
+            this.loadJobs();
+          } else {
+            alert('Failed to pause job: ' + response.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error pausing job:', error);
+          alert('Failed to pause job. Please try again.');
+        }
+      });
+    }
     this.closeDropdown();
+  }
+
+  resumeJob(jobId: number): void {
+    if (confirm('Are you sure you want to resume this job posting?')) {
+      this.jobService.resumeJob(jobId).subscribe({
+        next: (response) => {
+          if (response.success) {
+            console.log('Job resumed successfully:', response);
+            // Reload jobs to get updated status
+            this.loadJobs();
+          } else {
+            alert('Failed to resume job: ' + response.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error resuming job:', error);
+          alert('Failed to resume job. Please try again.');
+        }
+      });
+    }
+    this.closeDropdown();
+  }
+
+  formatSalary(salary: string): string {
+    if (!salary) return 'Not specified';
+
+    // Map currency symbols to codes
+    const currencyMap: { [key: string]: string } = {
+      '₹': 'INR',
+      '$': 'USD',
+      'A$': 'AUD'
+    };
+
+    // Extract currency symbol
+    let currencyCode = '';
+    let salaryText = salary;
+    
+    for (const [symbol, code] of Object.entries(currencyMap)) {
+      if (salary.startsWith(symbol)) {
+        currencyCode = code;
+        salaryText = salary.substring(symbol.length);
+        break;
+      }
+    }
+
+    // Format numbers (e.g., 50000 -> 50k, 1000000 -> 1M)
+    const formatNumber = (num: string): string => {
+      const n = parseFloat(num.replace(/[^0-9.]/g, ''));
+      if (isNaN(n)) return num;
+      
+      if (n >= 1000000) {
+        return (n / 1000000).toFixed(1).replace('.0', '') + 'M';
+      } else if (n >= 1000) {
+        return (n / 1000).toFixed(0) + 'K';
+      }
+      return n.toString();
+    };
+
+    // Handle range (e.g., "50000-80000" or "50k-80k")
+    if (salaryText.includes('-')) {
+      const parts = salaryText.split('-');
+      const formattedParts = parts.map(p => formatNumber(p.trim()));
+      return `${currencyCode} ${formattedParts.join('-')}`;
+    }
+
+    // Handle single value
+    return `${currencyCode} ${formatNumber(salaryText)}`;
   }
 
   closeJob(jobId: number): void {
-    console.log('Closing job:', jobId);
+    if (confirm('Are you sure you want to close this job posting? This will stop accepting new applicants.')) {
+      this.jobService.closeJob(jobId).subscribe({
+        next: (response) => {
+          if (response.success) {
+            console.log('Job closed successfully:', response);
+            // Reload jobs to get updated status
+            this.loadJobs();
+          } else {
+            alert('Failed to close job: ' + response.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error closing job:', error);
+          alert('Failed to close job. Please try again.');
+        }
+      });
+    }
     this.closeDropdown();
   }
 
-  duplicateJob(jobId: number): void {
-    console.log('Duplicating job:', jobId);
+  reopenJob(jobId: number): void {
+    if (confirm('Are you sure you want to reopen this job posting?')) {
+      this.jobService.reopenJob(jobId).subscribe({
+        next: (response) => {
+          if (response.success) {
+            console.log('Job reopened successfully:', response);
+            // Reload jobs to get updated status
+            this.loadJobs();
+          } else {
+            alert('Failed to reopen job: ' + response.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error reopening job:', error);
+          alert('Failed to reopen job. Please try again.');
+        }
+      });
+    }
     this.closeDropdown();
   }
 
   deleteJob(jobId: number): void {
-    if (confirm('Are you sure you want to delete this job posting?')) {
-      this.listings = this.listings.filter(l => l.id !== jobId);
-      console.log('Deleted job:', jobId);
+    if (confirm('Are you sure you want to delete this job posting? This action cannot be undone.')) {
+      this.jobService.deleteJob(jobId).subscribe({
+        next: (response) => {
+          if (response.success) {
+            console.log('Job deleted successfully:', response);
+            // Remove from local list
+            this.listings = this.listings.filter(l => l.id !== jobId);
+          } else {
+            alert('Failed to delete job: ' + response.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting job:', error);
+          alert('Failed to delete job. Please try again.');
+        }
+      });
     }
     this.closeDropdown();
   }
@@ -115,11 +253,11 @@ export class RecruiterListingsComponent {
   }
 
   get activeJobsCount(): number {
-    return this.listings.filter(l => l.status === 'ACTIVE').length;
+    return this.listings.length; // All jobs from API are considered active
   }
 
   get totalApplicants(): number {
-    return this.listings.reduce((sum, l) => sum + l.applicants, 0);
+    return this.listings.reduce((sum, l) => sum + (l.applicantsCount || 0), 0);
   }
 
   get avgApplicants(): string {

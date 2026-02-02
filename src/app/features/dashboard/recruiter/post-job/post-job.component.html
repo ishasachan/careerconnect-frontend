@@ -1,4 +1,18 @@
 <div class="p-8">
+  <!-- Success/Error Messages -->
+  <div *ngIf="successMessage" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+    <p class="text-sm text-green-600 flex items-center gap-2">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage }}
+    </p>
+  </div>
+  <div *ngIf="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+    <p class="text-sm text-red-600 flex items-center gap-2">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </p>
+  </div>
+
   <!-- Enhanced Header -->
   <div class="mb-8">
     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg">
@@ -9,27 +23,24 @@
           <i class="fa-solid fa-arrow-left"></i>
         </button>
         <div class="flex-1">
-          <h1 class="text-3xl font-bold mb-2">Create Your Next Opportunity</h1>
-          <p class="text-indigo-100 text-sm">Build an attractive job posting to find the perfect candidate</p>
+          <h1 class="text-3xl font-bold mb-2">{{ isEditMode ? 'Update Job Posting' : 'Create Your Next Opportunity' }}</h1>
+          <p class="text-indigo-100 text-sm">{{ isEditMode ? 'Update the job details and save changes' : 'Build an attractive job posting to find the perfect candidate' }}</p>
         </div>
-        <div class="text-right">
-          <div class="text-xs text-indigo-200 mb-1">Draft Auto-saved</div>
-          <div class="text-sm font-semibold">Just now</div>
-        </div>
-      </div>
-      
-      <!-- Progress Indicator -->
-      <div class="mt-6 flex items-center gap-2">
-        <div class="flex-1 bg-white/20 rounded-full h-2">
-          <div class="bg-white rounded-full h-2" style="width: 65%"></div>
-        </div>
-        <span class="text-sm font-medium">65% Complete</span>
       </div>
     </div>
   </div>
 
   <!-- Form -->
   <div class="max-w-4xl mx-auto">
+    <!-- Loading State -->
+    <div *ngIf="isLoadingJob" class="flex items-center justify-center py-20">
+      <div class="text-center">
+        <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+        <p class="text-slate-600">Loading job data...</p>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoadingJob">
     <!-- Basic Information -->
     <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-8 mb-6 hover:shadow-lg transition-shadow">
       <div class="flex items-center gap-3 mb-6">
@@ -52,27 +63,25 @@
             class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
         </div>
 
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-2">Company Name *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="job.company"
+            placeholder="e.g., TechCorp Inc."
+            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+
         <div class="grid grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-2">Location *</label>
             <input 
               type="text" 
               [(ngModel)]="job.location"
-              placeholder="e.g., San Francisco, CA"
+              placeholder="e.g., Remote, San Francisco, CA"
               class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Work Mode *</label>
-            <select 
-              [(ngModel)]="job.workMode"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option *ngFor="let mode of workModes" [value]="mode">{{ mode }}</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-2">Job Type *</label>
             <select 
@@ -81,37 +90,34 @@
               <option *ngFor="let type of jobTypes" [value]="type">{{ type }}</option>
             </select>
           </div>
-
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">Experience Level *</label>
-            <select 
-              [(ngModel)]="job.experienceLevel"
-              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option *ngFor="let level of experienceLevels" [value]="level.value">{{ level.label }}</option>
-            </select>
-          </div>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-slate-700 mb-2">Salary Range</label>
-          <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">Salary Range *</label>
+            <div class="flex gap-2">
+              <select 
+                [(ngModel)]="job.currency"
+                class="w-32 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option *ngFor="let curr of currencies" [value]="curr.code">
+                  {{ curr.symbol }} {{ curr.code }}
+                </option>
+              </select>
+              <input 
+                type="text" 
+                [(ngModel)]="job.salary"
+                placeholder="e.g., 80k-120k, 50k-70k"
+                class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">Department *</label>
             <input 
-              type="number" 
-              [(ngModel)]="job.salaryMin"
-              placeholder="Min"
-              class="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <input 
-              type="number" 
-              [(ngModel)]="job.salaryMax"
-              placeholder="Max"
-              class="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <select 
-              [(ngModel)]="job.currency"
-              class="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-              <option value="GBP">GBP</option>
-            </select>
+              type="text" 
+              [(ngModel)]="job.department"
+              placeholder="e.g., Engineering, Marketing"
+              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
         </div>
       </div>
@@ -125,17 +131,13 @@
         </div>
         <div>
           <h2 class="text-xl font-bold text-slate-800">Job Description</h2>
-          <p class="text-xs text-slate-500">Tell candidates what makes this role special</p>
+          <p class="text-xs text-slate-500">Tell candidates what makes this role special - use the toolbar to format text</p>
         </div>
       </div>
       
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-2">Description *</label>
-        <textarea 
-          [(ngModel)]="job.description"
-          rows="8"
-          placeholder="Describe the role, team, and what makes this opportunity great..."
-          class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+        <div #editor class="bg-white" style="min-height: 300px;"></div>
       </div>
     </div>
 
@@ -147,167 +149,13 @@
         </div>
         <div>
           <h2 class="text-xl font-bold text-slate-800">Requirements</h2>
-          <p class="text-xs text-slate-500">Must-have qualifications for candidates</p>
+          <p class="text-xs text-slate-500">List the required skills and qualifications - use the toolbar to format text</p>
         </div>
       </div>
       
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-slate-700 mb-2">Add Requirement</label>
-        <div class="flex gap-2">
-          <input 
-            type="text" 
-            [(ngModel)]="requirementInput"
-            (keyup.enter)="addItem('requirement')"
-            placeholder="e.g., 5+ years of React experience"
-            class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <button 
-            (click)="addItem('requirement')"
-            class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-            Add
-          </button>
-        </div>
-      </div>
-
-      <div *ngIf="job.requirements.length > 0" class="space-y-2">
-        <div *ngFor="let req of job.requirements; let i = index" 
-             class="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
-          <i class="fa-solid fa-check text-green-600"></i>
-          <span class="flex-1 text-slate-700">{{ req }}</span>
-          <button 
-            (click)="removeItem('requirements', i)"
-            class="text-red-600 hover:text-red-800">
-            <i class="fa-solid fa-times"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Responsibilities -->
-    <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-8 mb-6 hover:shadow-lg transition-shadow">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg">
-          <i class="fa-solid fa-list-check text-white text-xl"></i>
-        </div>
-        <div>
-          <h2 class="text-xl font-bold text-slate-800">Responsibilities</h2>
-          <p class="text-xs text-slate-500">What the candidate will be doing</p>
-        </div>
-      </div>
-      
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-slate-700 mb-2">Add Responsibility</label>
-        <div class="flex gap-2">
-          <input 
-            type="text" 
-            [(ngModel)]="responsibilityInput"
-            (keyup.enter)="addItem('responsibility')"
-            placeholder="e.g., Lead frontend architecture decisions"
-            class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <button 
-            (click)="addItem('responsibility')"
-            class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-            Add
-          </button>
-        </div>
-      </div>
-
-      <div *ngIf="job.responsibilities.length > 0" class="space-y-2">
-        <div *ngFor="let resp of job.responsibilities; let i = index" 
-             class="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
-          <i class="fa-solid fa-circle text-indigo-600 text-xs"></i>
-          <span class="flex-1 text-slate-700">{{ resp }}</span>
-          <button 
-            (click)="removeItem('responsibilities', i)"
-            class="text-red-600 hover:text-red-800">
-            <i class="fa-solid fa-times"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Skills & Benefits -->
-    <div class="grid grid-cols-2 gap-6 mb-6">
-      <!-- Skills -->
-      <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 hover:shadow-lg transition-shadow">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center shadow">
-            <i class="fa-solid fa-code text-white"></i>
-          </div>
-          <div>
-            <h2 class="text-lg font-bold text-slate-800">Required Skills</h2>
-            <p class="text-xs text-slate-500">Technical expertise needed</p>
-          </div>
-        </div>
-        
-        <div class="mb-4">
-          <div class="flex gap-2">
-            <input 
-              type="text" 
-              [(ngModel)]="skillInput"
-              (keyup.enter)="addItem('skill')"
-              placeholder="e.g., React, TypeScript"
-              class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <button 
-              (click)="addItem('skill')"
-              class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-              <i class="fa-solid fa-plus"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap gap-2">
-          <span *ngFor="let skill of job.skills; let i = index" 
-                class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm flex items-center gap-2">
-            {{ skill }}
-            <button 
-              (click)="removeItem('skills', i)"
-              class="hover:text-indigo-900">
-              <i class="fa-solid fa-times text-xs"></i>
-            </button>
-          </span>
-        </div>
-      </div>
-
-      <!-- Benefits -->
-      <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 hover:shadow-lg transition-shadow">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center shadow">
-            <i class="fa-solid fa-gift text-white"></i>
-          </div>
-          <div>
-            <h2 class="text-lg font-bold text-slate-800">Benefits</h2>
-            <p class="text-xs text-slate-500">Perks and compensation</p>
-          </div>
-        </div>
-        
-        <div class="mb-4">
-          <div class="flex gap-2">
-            <input 
-              type="text" 
-              [(ngModel)]="benefitInput"
-              (keyup.enter)="addItem('benefit')"
-              placeholder="e.g., Health insurance"
-              class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <button 
-              (click)="addItem('benefit')"
-              class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-              <i class="fa-solid fa-plus"></i>
-            </button>
-          </div>
-        </div>
-
-        <div *ngIf="job.benefits.length > 0" class="space-y-2">
-          <div *ngFor="let benefit of job.benefits; let i = index" 
-               class="flex items-center gap-2 p-2 bg-slate-50 rounded text-sm">
-            <i class="fa-solid fa-star text-yellow-500 text-xs"></i>
-            <span class="flex-1 text-slate-700">{{ benefit }}</span>
-            <button 
-              (click)="removeItem('benefits', i)"
-              class="text-red-600 hover:text-red-800">
-              <i class="fa-solid fa-times text-xs"></i>
-            </button>
-          </div>
-        </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-2">Requirements *</label>
+        <div #requirementsEditor class="bg-white" style="min-height: 200px;"></div>
       </div>
     </div>
 
@@ -315,22 +163,20 @@
     <div class="flex items-center justify-end gap-3">
       <button 
         (click)="cancel()"
-        class="px-6 py-2.5 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all font-medium hover:shadow-md">
+        [disabled]="isPosting"
+        class="px-6 py-2.5 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all font-medium hover:shadow-md disabled:opacity-50">
         <i class="fa-solid fa-times mr-2"></i>
         Cancel
       </button>
       <button 
-        (click)="saveDraft()"
-        class="px-6 py-2.5 border-2 border-indigo-600 text-indigo-600 rounded-xl hover:bg-indigo-50 transition-all font-medium hover:shadow-md">
-        <i class="fa-solid fa-save mr-2"></i>
-        Save Draft
-      </button>
-      <button 
         (click)="postJob()"
-        class="px-8 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all font-medium shadow-lg hover:shadow-xl flex items-center gap-2">
-        <i class="fa-solid fa-rocket"></i>
-        Post Job
+        [disabled]="isPosting"
+        class="px-8 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all font-medium shadow-lg hover:shadow-xl flex items-center gap-2 disabled:opacity-50">
+        <i *ngIf="!isPosting" class="fa-solid fa-rocket"></i>
+        <i *ngIf="isPosting" class="fas fa-spinner fa-spin"></i>
+        <span>{{ isPosting ? (isEditMode ? 'Updating...' : 'Posting...') : (isEditMode ? 'Update Job' : 'Post Job') }}</span>
       </button>
+    </div>
     </div>
   </div>
 </div>

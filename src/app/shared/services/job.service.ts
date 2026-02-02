@@ -32,4 +32,37 @@ export class JobService {
   getJobById(id: number): Observable<JobResponse> {
     return this.http.get<JobResponse>(`${this.apiUrl}/${id}`);
   }
+
+  // Recruiter APIs
+  postJob(recruiterId: number, jobData: any): Observable<JobResponse> {
+    return this.http.post<JobResponse>(`${this.apiUrl}/recruiter/${recruiterId}`, jobData);
+  }
+
+  updateJob(jobId: number, jobData: any): Observable<JobResponse> {
+    return this.http.put<JobResponse>(`${this.apiUrl}/${jobId}`, jobData);
+  }
+
+  deleteJob(jobId: number): Observable<{ success: boolean; message: string }> {
+    return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/${jobId}`);
+  }
+
+  pauseJob(jobId: number): Observable<JobResponse> {
+    return this.http.patch<JobResponse>(`${this.apiUrl}/${jobId}/pause`, {});
+  }
+
+  resumeJob(jobId: number): Observable<JobResponse> {
+    return this.http.patch<JobResponse>(`${this.apiUrl}/${jobId}/resume`, {});
+  }
+
+  closeJob(jobId: number): Observable<JobResponse> {
+    return this.http.patch<JobResponse>(`${this.apiUrl}/${jobId}/close`, {});
+  }
+
+  reopenJob(jobId: number): Observable<JobResponse> {
+    return this.http.patch<JobResponse>(`${this.apiUrl}/${jobId}/reopen`, {});
+  }
+
+  getRecruiterJobs(recruiterId: number): Observable<JobsResponse> {
+    return this.http.get<JobsResponse>(`${this.apiUrl}/recruiter/${recruiterId}`);
+  }
 }

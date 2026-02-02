@@ -11,7 +11,7 @@ export interface Application {
   currentCompany: string;
   resumeUrl: string;
   coverLetter: string;
-  status: 'APPLIED' | 'UNDER_REVIEW' | 'SHORTLISTED' | 'INTERVIEW' | 'REJECTED';
+  status: 'APPLIED' | 'UNDER_REVIEW' | 'SHORTLISTED' | 'INTERVIEW' | 'HIRED' | 'REJECTED';
   appliedDate: string;
 }
 
