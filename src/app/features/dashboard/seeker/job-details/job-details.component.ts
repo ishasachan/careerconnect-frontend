@@ -188,12 +188,18 @@ export class JobDetailsComponent implements OnInit {
         if (response.success) {
           alert('Application submitted successfully!');
           this.closeApplicationForm();
+        } else {
+          // Handle error case (e.g., already applied)
+          alert(response.message || 'Failed to submit application');
+          this.closeApplicationForm();
         }
       },
       error: (error) => {
         this.isSubmittingApplication = false;
         console.error('Error submitting application:', error);
-        alert('Failed to submit application. Please try again.');
+        const errorMsg = error.error?.message || 'Failed to submit application. Please try again.';
+        alert(errorMsg);
+        this.closeApplicationForm();
       }
     });
   }

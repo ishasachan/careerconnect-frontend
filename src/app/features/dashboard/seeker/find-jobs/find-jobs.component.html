@@ -175,71 +175,149 @@
 
     <!-- AI Companion Card (Right Side) -->
     <div class="lg:col-span-1" *ngIf="!isLoading">
-      <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white sticky top-6 shadow-xl">
+      <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 rounded-2xl p-6 text-white sticky top-6 shadow-2xl border border-slate-700/50">
+        <!-- Animated Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500 rounded-full blur-3xl"></div>
+          <div class="absolute bottom-0 left-0 w-32 h-32 bg-purple-500 rounded-full blur-3xl"></div>
+        </div>
+        
         <!-- Header -->
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-            <i class="fas fa-magic text-white"></i>
+        <div class="relative mb-6">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-magic text-white text-lg"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-xl">AI Recommendations</h3>
+              <p class="text-xs text-indigo-300 flex items-center gap-1">
+                <i class="fas fa-sparkles text-xs"></i>
+                Powered by Gemini AI
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 class="font-bold text-lg">AI Recommendations</h3>
-            <p class="text-xs text-slate-400">Powered by AI</p>
-          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Get personalized job matches based on your skills, experience, and career goals
+          </p>
         </div>
 
         <!-- Recommended Jobs -->
-        <div class="space-y-3 mb-6">
+        <div class="space-y-3 mb-6 relative">
           <!-- Loading State -->
-          <div *ngIf="isLoadingRecommendations" class="text-center py-6">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mb-3"></div>
-            <p class="text-xs text-slate-400">Loading recommendations...</p>
+          <div *ngIf="isLoadingRecommendations" class="text-center py-8">
+            <div class="relative inline-block mb-4">
+              <div class="w-12 h-12 rounded-full border-4 border-slate-700 border-t-indigo-500 animate-spin"></div>
+              <div class="absolute inset-0 w-12 h-12 rounded-full bg-indigo-500/20 blur-lg"></div>
+            </div>
+            <p class="text-sm text-slate-300 font-medium">Finding perfect matches...</p>
+            <p class="text-xs text-slate-500 mt-1">Analyzing your profile</p>
           </div>
 
           <!-- Profile Incomplete State -->
-          <div *ngIf="!isLoadingRecommendations && !isProfileComplete" class="text-center py-6">
-            <i class="fas fa-user-circle text-slate-600 text-3xl mb-3"></i>
-            <p class="text-xs text-slate-400 mb-2">Complete your profile to get personalized recommendations!</p>
+          <div *ngIf="!isLoadingRecommendations && !isProfileComplete" class="text-center py-8">
+            <div class="relative inline-block mb-4">
+              <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/30">
+                <i class="fas fa-user-lock text-amber-400 text-3xl"></i>
+              </div>
+              <div class="absolute -top-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center">
+                <i class="fas fa-exclamation text-white text-xs"></i>
+              </div>
+            </div>
+            <h4 class="text-base font-bold text-white mb-2">Profile Incomplete</h4>
+            <p class="text-xs text-slate-400 mb-4 leading-relaxed px-4">
+              Complete your profile to unlock AI-powered job recommendations tailored just for you
+            </p>
             <button 
               (click)="navigateToProfile()" 
-              class="mt-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors">
-              Complete Profile
+              class="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+              <i class="fas fa-user-edit mr-2"></i>
+              Complete Profile Now
             </button>
           </div>
 
           <!-- Recommendations List -->
           <div 
-            *ngFor="let rec of recommendations" 
+            *ngFor="let rec of recommendations; let i = index" 
             (click)="viewRecommendedJob(rec.jobId)"
-            class="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/50 transition-colors cursor-pointer">
-            <div class="flex items-start justify-between mb-2">
-              <div>
-                <p class="font-bold text-sm text-white mb-1">{{ rec.title }}</p>
-                <p class="text-xs text-slate-400 uppercase tracking-wide">{{ rec.company }}</p>
+            class="group bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:bg-slate-700/70 hover:border-indigo-500/50 transition-all cursor-pointer hover:shadow-xl relative overflow-hidden">
+            <!-- Match Badge -->
+            <div class="absolute top-3 right-3">
+              <div class="relative">
+                <span class="px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-500 text-white text-xs font-bold rounded-full shadow-lg">
+                  {{ rec.match }}% Match
+                </span>
+                <div class="absolute inset-0 bg-emerald-400 rounded-full blur-md opacity-30"></div>
               </div>
-              <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded">{{ rec.match }}%</span>
             </div>
-            <p class="text-xs text-slate-400 mb-2">{{ rec.location }} • {{ rec.salary }}</p>
+            
+            <div class="pr-20">
+              <p class="font-bold text-sm text-white mb-1 group-hover:text-indigo-300 transition-colors">{{ rec.title }}</p>
+              <p class="text-xs text-slate-400 uppercase tracking-wide mb-2 flex items-center gap-1">
+                <i class="fas fa-building text-xs"></i>
+                {{ rec.company }}
+              </p>
+            </div>
+            
+            <div class="flex items-center gap-2 text-xs text-slate-400 mb-3">
+              <span class="flex items-center gap-1">
+                <i class="fas fa-map-marker-alt"></i>
+                {{ rec.location }}
+              </span>
+              <span>•</span>
+              <span class="flex items-center gap-1">
+                <i class="fas fa-dollar-sign"></i>
+                {{ rec.salary }}
+              </span>
+            </div>
+            
             <div class="flex gap-1 flex-wrap">
-              <span *ngFor="let skill of rec.skills" class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded">{{ skill }}</span>
+              <span *ngFor="let skill of rec.skills.slice(0, 3)" 
+                    class="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded-md border border-indigo-500/30">
+                {{ skill }}
+              </span>
+              <span *ngIf="rec.skills.length > 3" 
+                    class="px-2 py-1 bg-slate-700/50 text-slate-400 text-xs rounded-md">
+                +{{ rec.skills.length - 3 }}
+              </span>
+            </div>
+            
+            <!-- Hover Arrow -->
+            <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+              <i class="fas fa-arrow-right text-indigo-400"></i>
             </div>
           </div>
 
           <!-- No Recommendations State (Profile Complete but no matches) -->
-          <div *ngIf="!isLoadingRecommendations && isProfileComplete && recommendations.length === 0" class="text-center py-6">
-            <i class="fas fa-search text-slate-600 text-3xl mb-3"></i>
-            <p class="text-xs text-slate-400 mb-2">No recommendations available yet.</p>
-            <p class="text-xs text-slate-500">Check back later for personalized job matches!</p>
+          <div *ngIf="!isLoadingRecommendations && isProfileComplete && recommendations.length === 0" class="text-center py-8">
+            <div class="relative inline-block mb-4">
+              <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center border border-blue-500/30">
+                <i class="fas fa-search text-blue-400 text-3xl"></i>
+              </div>
+            </div>
+            <h4 class="text-base font-bold text-white mb-2">No Matches Yet</h4>
+            <p class="text-xs text-slate-400 mb-3 leading-relaxed px-4">
+              We're constantly updating our database with new opportunities
+            </p>
+            <p class="text-xs text-slate-500">Check back soon for personalized recommendations!</p>
           </div>
         </div>
 
         <!-- Tips Section -->
-        <div class="border-t border-slate-700 pt-4">
-          <p class="text-xs text-slate-400 mb-3">
-            <i class="fas fa-lightbulb text-yellow-400 mr-2"></i>
-            <span class="font-semibold text-slate-300">Pro Tip:</span> Complete your profile to get better matches!
-          </p>
-          <button class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors text-sm">
-            <i class="fas fa-sparkles mr-2"></i>Get More Recommendations
+        <div class="border-t border-slate-700/50 pt-4 relative">
+          <div class="flex items-start gap-2 mb-3 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+            <i class="fas fa-lightbulb text-yellow-400 text-sm mt-0.5"></i>
+            <div>
+              <p class="text-xs text-slate-300 font-semibold mb-1">Pro Tip</p>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Keep your profile updated with latest skills and experience to get better AI recommendations
+              </p>
+            </div>
+          </div>
+          <button 
+            (click)="navigateToProfile()"
+            class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all text-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            <i class="fas fa-sparkles mr-2"></i>
+            Improve Recommendations
           </button>
         </div>
       </div>
