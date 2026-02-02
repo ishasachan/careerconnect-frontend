@@ -4,6 +4,53 @@
     <h1 class="text-3xl font-bold text-slate-800">Your Applications</h1>
   </div>
 
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Applied</div>
+        <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+          <i class="fa-solid fa-paper-plane text-indigo-600 text-lg"></i>
+        </div>
+      </div>
+      <div class="text-4xl font-bold text-slate-800">{{ applications.length }}</div>
+      <p class="text-xs text-slate-500 mt-2">All applications</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Shortlisted</div>
+        <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+          <i class="fa-solid fa-star text-purple-600 text-lg"></i>
+        </div>
+      </div>
+      <div class="text-4xl font-bold text-slate-800">{{ getStatusCount('SHORTLISTED') }}</div>
+      <p class="text-xs text-slate-500 mt-2">Selected candidates</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Interview</div>
+        <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+          <i class="fa-solid fa-users text-indigo-600 text-lg"></i>
+        </div>
+      </div>
+      <div class="text-4xl font-bold text-slate-800">{{ getStatusCount('INTERVIEW') }}</div>
+      <p class="text-xs text-slate-500 mt-2">Interview stage</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Hired</div>
+        <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+          <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
+        </div>
+      </div>
+      <div class="text-4xl font-bold text-slate-800">{{ getStatusCount('HIRED') }}</div>
+      <p class="text-xs text-slate-500 mt-2">Successfully placed</p>
+    </div>
+  </div>
+
   <!-- Loading State -->
   <div *ngIf="isLoading" class="flex items-center justify-center py-20">
     <div class="text-center">
@@ -67,7 +114,7 @@
         <div class="col-span-2 flex items-center">
           <span [class]="getStatusClass(application.status)" 
                 class="px-3 py-1 rounded-full text-xs font-semibold">
-            {{ application.status }}
+            {{ application.status.replace('_', ' ') }}
           </span>
         </div>
 
@@ -89,63 +136,6 @@
       <button class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
         Find Jobs
       </button>
-    </div>
-  </div>
-
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-4 gap-6 mt-8">
-    <div class="bg-white rounded-lg shadow-sm p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-slate-500 mb-1">Total Applied</p>
-          <p class="text-3xl font-bold text-slate-800">{{ applications.length }}</p>
-        </div>
-        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-          <i class="fa-solid fa-paper-plane text-indigo-600 text-xl"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow-sm p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-slate-500 mb-1">Shortlisted</p>
-          <p class="text-3xl font-bold text-blue-600">
-            {{ getStatusCount('SHORTLISTED') }}
-          </p>
-        </div>
-        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-          <i class="fa-solid fa-star text-blue-600 text-xl"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow-sm p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-slate-500 mb-1">Under Review</p>
-          <p class="text-3xl font-bold text-yellow-600">
-            {{ getStatusCount('UNDER REVIEW') }}
-          </p>
-        </div>
-        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-          <i class="fa-solid fa-clock text-yellow-600 text-xl"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow-sm p-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm text-slate-500 mb-1">Rejected</p>
-          <p class="text-3xl font-bold text-red-600">
-            {{ getStatusCount('REJECTED') }}
-          </p>
-        </div>
-        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-          <i class="fa-solid fa-times text-red-600 text-xl"></i>
-        </div>
-      </div>
     </div>
   </div>
 </div>

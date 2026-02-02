@@ -55,11 +55,12 @@ export class ApplicationsComponent implements OnInit {
 
   getStatusClass(status: string): string {
     const statusClasses: { [key: string]: string } = {
-      'SHORTLISTED': 'bg-blue-100 text-blue-700',
-      'UNDER REVIEW': 'bg-yellow-100 text-yellow-700',
-      'REJECTED': 'bg-red-100 text-red-700',
-      'APPLIED': 'bg-gray-100 text-gray-700',
-      'INTERVIEW': 'bg-purple-100 text-purple-700'
+      'APPLIED': 'bg-blue-100 text-blue-700',
+      'UNDER_REVIEW': 'bg-yellow-100 text-yellow-700',
+      'SHORTLISTED': 'bg-purple-100 text-purple-700',
+      'INTERVIEW': 'bg-indigo-100 text-indigo-700',
+      'HIRED': 'bg-green-100 text-green-700',
+      'REJECTED': 'bg-red-100 text-red-700'
     };
     return statusClasses[status] || 'bg-gray-100 text-gray-700';
   }

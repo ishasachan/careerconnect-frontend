@@ -7,6 +7,7 @@ import { Job } from '../../../../shared/models/job.model';
 import { RecommendationService } from '../../../../shared/services/recommendation.service';
 import { Recommendation } from '../../../../shared/models/recommendation.model';
 import { AuthService } from '../../../../shared/services/auth.service';
+import { ProfileService } from '../../../../shared/services/profile.service';
 
 @Component({
   selector: 'app-find-jobs',
@@ -24,9 +25,11 @@ export class FindJobsComponent implements OnInit {
   
   jobs: Job[] = [];
   recommendations: Recommendation[] = [];
+  isProfileComplete = false;
+  isLoadingRecommendations = true;
 
   jobTypes = ['All Types', 'FULL-TIME', 'PART-TIME', 'CONTRACT', 'INTERNSHIP'];
-  locations = ['All Locations', 'Remote', 'New York, NY', 'San Francisco, CA', 'Austin, TX', 'Berlin, DE'];
+  locations: string[] = ['All Locations'];
 
   selectedJob: Job | null = null;
 
@@ -34,12 +37,69 @@ export class FindJobsComponent implements OnInit {
     private router: Router,
     private jobService: JobService,
     private recommendationService: RecommendationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private profileService: ProfileService
   ) {}
 
   ngOnInit() {
+    this.loadAvailableLocations();
     this.searchJobs();
-    this.loadRecommendations();
+    this.checkProfileAndLoadRecommendations();
+  }
+
+  loadAvailableLocations() {
+    // Fetch all jobs to extract unique locations
+    this.jobService.getJobs({}).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          // Extract unique locations from ACTIVE jobs only
+          const activeJobs = response.data.filter(job => job.status === 'ACTIVE');
+          const uniqueLocations = [...new Set(activeJobs.map(job => job.location))]
+            .filter(loc => loc && loc.trim() !== '')
+            .sort();
+          
+          this.locations = ['All Locations', ...uniqueLocations];
+        }
+      },
+      error: (error) => {
+        console.error('Error loading locations:', error);
+        // Keep default 'All Locations' if error
+      }
+    });
+  }
+
+  checkProfileAndLoadRecommendations() {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      this.isLoadingRecommendations = false;
+      return;
+    }
+
+    // First check if profile exists and is complete
+    this.profileService.getProfile(currentUser.id).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const profile = response.data;
+          // Check if profile has essential fields
+          this.isProfileComplete = !!(profile.bio && profile.skills && profile.resumeUrl);
+          
+          if (this.isProfileComplete) {
+            // Profile is complete, load recommendations
+            this.loadRecommendations();
+          } else {
+            this.isLoadingRecommendations = false;
+          }
+        } else {
+          this.isProfileComplete = false;
+          this.isLoadingRecommendations = false;
+        }
+      },
+      error: (error) => {
+        console.error('Error checking profile:', error);
+        this.isProfileComplete = false;
+        this.isLoadingRecommendations = false;
+      }
+    });
   }
 
   loadRecommendations() {
@@ -47,19 +107,22 @@ export class FindJobsComponent implements OnInit {
     if (currentUser) {
       this.recommendationService.getUserRecommendations(currentUser.id).subscribe({
         next: (response) => {
+          this.isLoadingRecommendations = false;
           if (response.success && response.data) {
             this.recommendations = response.data.slice(0, 3); // Get top 3
           } else {
-            // Profile not found or no recommendations
             console.log('No recommendations available:', response.message);
             this.recommendations = [];
           }
         },
         error: (error) => {
           console.error('Error loading recommendations:', error);
+          this.isLoadingRecommendations = false;
           this.recommendations = [];
         }
       });
+    } else {
+      this.isLoadingRecommendations = false;
     }
   }
 
@@ -77,7 +140,8 @@ export class FindJobsComponent implements OnInit {
       next: (response) => {
         this.isLoading = false;
         if (response.success && response.data) {
-          this.jobs = response.data;
+          // Filter to show only ACTIVE jobs (exclude PAUSED, CLOSED, and deleted jobs)
+          this.jobs = response.data.filter(job => job.status === 'ACTIVE');
         }
       },
       error: (error) => {

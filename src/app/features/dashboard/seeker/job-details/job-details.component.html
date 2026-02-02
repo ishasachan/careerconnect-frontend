@@ -78,7 +78,7 @@
           <span class="w-1 h-6 bg-indigo-600 rounded-full"></span>
           Job Description
         </h2>
-        <p class="text-slate-600 leading-relaxed">{{ job.description }}</p>
+        <div class="text-slate-600 leading-relaxed prose prose-slate max-w-none" [innerHTML]="job.description"></div>
       </div>
 
       <!-- Requirements & Skills -->
@@ -87,15 +87,7 @@
           <span class="w-1 h-6 bg-indigo-600 rounded-full"></span>
           Requirements & Skills
         </h2>
-        <div class="grid grid-cols-2 gap-4">
-          <div 
-            *ngFor="let skill of getRequirementsArray()"
-            class="px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl font-medium flex items-center gap-2"
-          >
-            <i class="fas fa-check-circle"></i>
-            {{ skill }}
-          </div>
-        </div>
+        <div class="text-slate-600 leading-relaxed prose prose-slate max-w-none" [innerHTML]="job.requirements"></div>
       </div>
     </div>
 

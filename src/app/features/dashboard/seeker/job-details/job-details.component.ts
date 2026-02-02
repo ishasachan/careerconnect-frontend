@@ -61,6 +61,12 @@ export class JobDetailsComponent implements OnInit {
       next: (response) => {
         this.isLoading = false;
         if (response.success && response.data) {
+          // Check if job is ACTIVE
+          if (response.data.status !== 'ACTIVE') {
+            this.errorMessage = 'This job is no longer available.';
+            this.job = null;
+            return;
+          }
           this.job = response.data;
           this.checkIfBookmarked();
         }
