@@ -124,8 +124,12 @@ export class SeekerDashboardComponent implements OnInit {
     return classes[status] || 'bg-gray-100 text-gray-700';
   }
 
-  navigateTo(path: string) {
-    this.router.navigate([path]);
+  navigateTo(path: string, status?: string) {
+    if (status) {
+      this.router.navigate([path], { queryParams: { status } });
+    } else {
+      this.router.navigate([path]);
+    }
   }
 
   viewJob(jobId: number) {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Application } from '../../../../shared/models/application.model';
 import { ApplicationService } from '../../../../shared/services/application.service';
 import { AuthService } from '../../../../shared/services/auth.service';
@@ -14,16 +14,34 @@ import { AuthService } from '../../../../shared/services/auth.service';
 })
 export class ApplicationsComponent implements OnInit {
   applications: Application[] = [];
+  filteredApplications: Application[] = [];
   isLoading = true;
   errorMessage = '';
+  selectedFilter: string = 'ALL';
+  filterOptions = [
+    { value: 'ALL', label: 'All Applications', icon: 'fa-list' },
+    { value: 'APPLIED', label: 'Applied', icon: 'fa-paper-plane' },
+    { value: 'UNDER_REVIEW', label: 'Under Review', icon: 'fa-eye' },
+    { value: 'SHORTLISTED', label: 'Shortlisted', icon: 'fa-star' },
+    { value: 'INTERVIEW', label: 'Interview', icon: 'fa-users' },
+    { value: 'HIRED', label: 'Hired', icon: 'fa-circle-check' },
+    { value: 'REJECTED', label: 'Rejected', icon: 'fa-times-circle' }
+  ];
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private applicationService: ApplicationService,
     private authService: AuthService
   ) {}
 
   ngOnInit() {
+    // Check for status query parameter
+    this.route.queryParams.subscribe(params => {
+      if (params['status']) {
+        this.selectedFilter = params['status'];
+      }
+    });
     this.loadApplications();
   }
 
@@ -43,6 +61,7 @@ export class ApplicationsComponent implements OnInit {
         this.isLoading = false;
         if (response.success && response.data) {
           this.applications = response.data;
+          this.applyFilter();
         }
       },
       error: (error) => {
@@ -51,6 +70,33 @@ export class ApplicationsComponent implements OnInit {
         this.errorMessage = 'Failed to load applications. Please try again.';
       }
     });
+  }
+
+  applyFilter() {
+    if (this.selectedFilter === 'ALL') {
+      this.filteredApplications = this.applications;
+    } else {
+      this.filteredApplications = this.applications.filter(
+        app => app.status === this.selectedFilter
+      );
+    }
+  }
+
+  setFilter(filter: string) {
+    this.selectedFilter = filter;
+    this.applyFilter();
+    // Update URL without reloading
+    if (filter === 'ALL') {
+      this.router.navigate([], { 
+        relativeTo: this.route,
+        queryParams: {} 
+      });
+    } else {
+      this.router.navigate([], { 
+        relativeTo: this.route,
+        queryParams: { status: filter } 
+      });
+    }
   }
 
   getStatusClass(status: string): string {
@@ -67,6 +113,10 @@ export class ApplicationsComponent implements OnInit {
 
   viewJobDetails(jobId: number): void {
     this.router.navigate(['/dashboard/seeker/find-jobs', jobId]);
+  }
+
+  navigateToFindJobs(): void {
+    this.router.navigate(['/dashboard/seeker/find-jobs']);
   }
 
   formatDate(date: string): string {
