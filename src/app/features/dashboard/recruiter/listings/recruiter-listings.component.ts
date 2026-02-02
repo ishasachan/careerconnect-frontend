@@ -253,7 +253,7 @@ export class RecruiterListingsComponent implements OnInit {
   }
 
   get activeJobsCount(): number {
-    return this.listings.length; // All jobs from API are considered active
+    return this.listings.filter(l => l.status === 'ACTIVE').length;
   }
 
   get totalApplicants(): number {

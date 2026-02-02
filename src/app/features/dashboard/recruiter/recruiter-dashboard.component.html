@@ -1,57 +1,231 @@
 <div class="p-8">
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-4 gap-6 mb-8">
-    <app-stat-card label="ACTIVE JOBS" [value]="3"></app-stat-card>
-    <app-stat-card label="TOTAL APPLICANTS" [value]="24"></app-stat-card>
-    <app-stat-card label="INTERVIEWING" [value]="12"></app-stat-card>
-    <app-stat-card label="NEW (24H)" [value]="'+15'" valueColor="text-green-600"></app-stat-card>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center py-20">
+    <div class="text-center">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+      <p class="text-slate-600">Loading dashboard...</p>
+    </div>
   </div>
 
-  <!-- Main Content Grid -->
-  <div class="grid grid-cols-3 gap-6">
-    <!-- Application Volume Chart -->
-    <div class="col-span-2 bg-white rounded-lg shadow-sm p-6">
-      <h2 class="text-xl font-bold text-slate-800 mb-6">Application Volume</h2>
-      
-      <!-- Chart -->
-      <div class="h-72">
-        <ngx-charts-bar-vertical
-          [results]="applicationVolumeData"
-          [xAxis]="showXAxis"
-          [yAxis]="showYAxis"
-          [legend]="showLegend"
-          [showXAxisLabel]="showXAxisLabel"
-          [showYAxisLabel]="showYAxisLabel"
-          [yAxisLabel]="yAxisLabel"
-          [gradient]="gradient"
-          [showGridLines]="showGridLines"
-          [scheme]="colorScheme">
-        </ngx-charts-bar-vertical>
+  <div *ngIf="!isLoading">
+    <!-- Profile Completion Alert -->
+    <div *ngIf="showProfileAlert" class="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-user-pen text-amber-600 text-xl"></i>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-lg font-bold text-slate-800">Complete Your Profile</h3>
+            <button (click)="dismissProfileAlert()" class="text-slate-400 hover:text-slate-600">
+              <i class="fa-solid fa-times"></i>
+            </button>
+          </div>
+          <p class="text-sm text-slate-600 mb-3">
+            Your profile is {{ profileCompletionPercentage }}% complete. A complete profile helps you attract better candidates and builds trust with job seekers.
+          </p>
+          <div class="flex items-center gap-4">
+            <div class="flex-1 bg-white rounded-full h-2 overflow-hidden">
+              <div class="bg-gradient-to-r from-amber-500 to-orange-500 h-full transition-all duration-500" 
+                   [style.width.%]="profileCompletionPercentage"></div>
+            </div>
+            <button (click)="completeProfile()" 
+                    class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all font-medium text-sm">
+              Complete Now
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Quick Job View -->
-    <div class="bg-white rounded-lg shadow-sm p-6">
+    <!-- Welcome Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-slate-800 mb-2">Dashboard Overview</h1>
+      <p class="text-slate-600">Track your recruitment performance and manage applications</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Active Jobs</div>
+          <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
+            <i class="fa-solid fa-briefcase text-indigo-600 text-lg"></i>
+          </div>
+        </div>
+        <div class="text-4xl font-bold text-slate-800">{{ activeJobsCount }}</div>
+        <p class="text-xs text-slate-500 mt-2">Currently hiring</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Applicants</div>
+          <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+            <i class="fa-solid fa-users text-blue-600 text-lg"></i>
+          </div>
+        </div>
+        <div class="text-4xl font-bold text-slate-800">{{ totalApplicants }}</div>
+        <p class="text-xs text-slate-500 mt-2">All applications</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Interviewing</div>
+          <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+            <i class="fa-solid fa-user-check text-purple-600 text-lg"></i>
+          </div>
+        </div>
+        <div class="text-4xl font-bold text-slate-800">{{ interviewingCount }}</div>
+        <p class="text-xs text-slate-500 mt-2">In progress</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-sm font-semibold text-slate-600 uppercase tracking-wide">Successfully Hired</div>
+          <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
+            <i class="fa-solid fa-trophy text-emerald-600 text-lg"></i>
+          </div>
+        </div>
+        <div class="text-4xl font-bold text-slate-800">{{ hiredCount }}</div>
+        <p class="text-xs text-slate-500 mt-2">Placements made</p>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-3 gap-6">
+      <!-- Application Volume Chart -->
+      <div class="col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Applications by Job</h2>
+            <p class="text-sm text-slate-500 mt-1">Distribution of applications across your job postings</p>
+          </div>
+        </div>
+        
+        <!-- Chart -->
+        <div style="height: 350px;" *ngIf="applicationVolumeData.length > 0">
+          <ngx-charts-bar-vertical
+            [results]="applicationVolumeData"
+            [xAxis]="showXAxis"
+            [yAxis]="showYAxis"
+            [legend]="showLegend"
+            [showXAxisLabel]="showXAxisLabel"
+            [showYAxisLabel]="showYAxisLabel"
+            [xAxisLabel]="xAxisLabel"
+            [yAxisLabel]="yAxisLabel"
+            [gradient]="gradient"
+            [showGridLines]="showGridLines"
+            [roundDomains]="roundDomains"
+            [scheme]="colorScheme"
+            [barPadding]="20"
+            [animations]="true">
+          </ngx-charts-bar-vertical>
+        </div>
+        <div *ngIf="applicationVolumeData.length === 0" class="h-80 flex items-center justify-center">
+          <div class="text-center">
+            <i class="fa-solid fa-chart-bar text-slate-300 text-5xl mb-4"></i>
+            <p class="text-slate-500">No application data yet</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Performing Jobs -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-slate-800">Top Jobs</h2>
+          <button (click)="viewAllListings()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+            View All
+          </button>
+        </div>
+
+        <!-- Job List -->
+        <div class="space-y-3" *ngIf="topPerformingJobs.length > 0">
+          <div *ngFor="let job of topPerformingJobs" 
+               (click)="viewJob(job.id)"
+               class="p-4 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors border border-slate-100">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="font-semibold text-slate-800 text-sm flex-1 pr-2">{{ job.title }}</h3>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800': job.status === 'ACTIVE',
+                      'bg-yellow-100 text-yellow-800': job.status === 'PAUSED',
+                      'bg-red-100 text-red-800': job.status === 'CLOSED'
+                    }">
+                {{ job.status }}
+              </span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-slate-500">
+              <span class="flex items-center gap-1">
+                <i class="fa-solid fa-users"></i>
+                {{ job.applicantsCount || 0 }}
+              </span>
+              <span>•</span>
+              <span>{{ job.type }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="topPerformingJobs.length === 0" class="text-center py-8">
+          <i class="fa-solid fa-briefcase text-slate-300 text-4xl mb-3"></i>
+          <p class="text-sm text-slate-500">No jobs posted yet</p>
+          <button (click)="viewAllListings()" 
+                  class="mt-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+            Post Your First Job
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Applications -->
+    <div class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-slate-800">Quick Job View</h2>
-        <button (click)="viewAllListings()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
-          View All Listings
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">Recent Applications</h2>
+          <p class="text-sm text-slate-500 mt-1">Latest candidates who applied to your jobs</p>
+        </div>
+        <button (click)="viewAllApplicants()" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+          View All Applications
         </button>
       </div>
 
-      <!-- Job List -->
-      <div class="space-y-4">
-        <div *ngFor="let job of jobs" 
-             (click)="viewJob(job.id)"
-             class="p-4 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors border border-slate-100">
-          <h3 class="font-semibold text-slate-800 mb-2">{{ job.title }}</h3>
-          <p class="text-sm text-slate-500">
-            <span class="text-indigo-600 font-medium">{{ job.applicants }} applicants</span>
-            <span class="mx-1">•</span>
-            <span>{{ job.type }}</span>
-          </p>
-          <i class="fa-solid fa-chevron-right text-slate-400 text-sm float-right -mt-8"></i>
+      <!-- Applications List -->
+      <div class="space-y-3" *ngIf="recentApplications.length > 0">
+        <div *ngFor="let app of recentApplications" 
+             (click)="viewApplicant(app.id)"
+             class="flex items-center gap-4 p-4 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors border border-slate-100">
+          <!-- Avatar -->
+          <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+            <span class="text-base font-bold text-indigo-600">
+              {{ getInitials(app.fullName) }}
+            </span>
+          </div>
+          
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-semibold text-slate-800 text-sm truncate">{{ app.fullName }}</h3>
+              <span [class]="getStatusColor(app.status)" 
+                    class="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
+                {{ app.status.replace('_', ' ') }}
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 truncate">
+              Applied for <span class="text-indigo-600 font-medium">{{ app.job.title }}</span>
+            </p>
+          </div>
+          
+          <!-- Meta -->
+          <div class="text-right">
+            <p class="text-xs text-slate-500">{{ formatDate(app.appliedDate) }}</p>
+            <p class="text-xs text-slate-400 mt-1">{{ app.yearsOfExperience }} years exp</p>
+          </div>
         </div>
+      </div>
+
+      <div *ngIf="recentApplications.length === 0" class="text-center py-12">
+        <i class="fa-solid fa-inbox text-slate-300 text-5xl mb-4"></i>
+        <h3 class="text-lg font-semibold text-slate-700 mb-2">No Applications Yet</h3>
+        <p class="text-sm text-slate-500">Applications will appear here once candidates start applying to your jobs</p>
       </div>
     </div>
   </div>

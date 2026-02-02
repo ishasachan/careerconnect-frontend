@@ -18,4 +18,8 @@ export class NavbarComponent {
   @Input() user!: NavbarUser;
   @Input() searchPlaceholder: string = 'Search...';
   @Input() hasNotification: boolean = false;
+
+  getInitials(name: string): string {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  }
 }
